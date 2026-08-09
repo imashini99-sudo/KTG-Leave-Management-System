@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KTG LEAVE PORTAL</title>
+    <style>
+        :root {
+            --primary: #1E3A8A;
+            --primary-hover: #1D4ED8;
+            --bg: #F1F5F9;
+            --card-bg: #FFFFFF;
+            --text: #0F172A;
+            --text-muted: #64748B;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --border: #E2E8F0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 20px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .auth-container {
+            max-width: 400px;
+            margin: 40px auto;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .auth-header-img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .auth-content { padding: 24px 32px 32px; }
+        .auth-container h2 { margin-bottom: 16px; text-align: center; color: var(--primary); font-size: 1.4rem; letter-spacing: 0.5px; }
+        .auth-toggle { display: flex; margin-bottom: 20px; border-bottom: 2px solid var(--border); }
+        .auth-toggle button {
+            flex: 1; background: none; color: var(--text-muted); border: none; padding: 10px;
+            border-bottom: 2px solid transparent; cursor: pointer; font-size: 0.95rem; font-weight: 600;
+        }
+        .auth-toggle button.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; background: var(--card-bg); padding: 16px 24px;
+            border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .role-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; }
+        .role-badge.employee { background: #DBEAFE; color: var(--primary); }
+        .role-badge.supervisor { background: #FEF3C7; color: #D97706; }
+
+        .btn-logout { background-color: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+        .btn-notify { background-color: var(--warning); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; margin-right: 8px; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--card-bg); padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-top: 4px solid var(--primary); }
+        .stat-card.casual { border-color: #8B5CF6; }
+        .stat-card h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
+        .stat-card .count { font-size: 1.8rem; font-weight: bold; margin-top: 8px; }
+
+        .main-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 24px; }
+        @media (max-width: 768px) { .main-grid { grid-template-columns: 1fr; } }
+
+        .card { background: var(--card-bg); padding: 24px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px; }
+        .card h2 { font-size: 1.2rem; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 6px; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
+
+        button.btn-primary { background-color: var(--primary); color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; }
+        button.btn-primary:hover { background-color: var(--primary-hover); }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        th { background-color: #F8FAFC; color: var(--text-muted); font-weight: 600; }
+
+        .badge { padding: 3px 6px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; display: inline-block; }
+        .badge-pending { background: #FEF3C7; color: #D97706; }
+        .badge-approved { background: #D1FAE5; color: #059669; }
+        .badge-rejected { background: #FEE2E2; color: #DC2626; }
+
+        .action-btn { padding: 4px 8px; font-size: 0.75rem; border: none; border-radius: 4px; color: white; cursor: pointer; margin-right: 4px; margin-bottom: 2px; }
+        .btn-approve { background-color: var(--success); }
+        .btn-reject { background-color: var(--danger); }
+        .btn-edit { background-color: var(--primary); padding: 5px 10px; font-weight: 600; border: none; border-radius: 4px; color: white; cursor: pointer; margin-right: 4px; }
+        .btn-delete { background-color: #6B7280; }
+        .btn-remove { background-color: var(--danger); padding: 5px 10px; font-weight: 600; border: none; border-radius: 4px; color: white; cursor: pointer; }
+
+        .form-inline-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 12px; }
+
+        .hidden { display: none !important; }
+        
+        .pending-box {
+            background: #FEF3C7;
+            border: 2px solid #F59E0B;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="auth-container">
+        <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=600&q=80" alt="KTG Leave Portal Banner" class="auth-header-img">
+        <div class="auth-content">
+            <h2>KTG LEAVE PORTAL</h2>
+            <div class="auth-toggle">
+                <button id="tab-login" class="active" onclick="toggleAuthTab('login')">Log In</button>
+                <button id="tab-signup" onclick="toggleAuthTab('signup')">Sign Up</button>
+            </div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="login-username" placeholder="Enter your username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn-primary">Log In</button>
+            </form>
+
+            <form id="signup-form" class="hidden">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signup-fullname" placeholder="e.g., Anura Perera" required>
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="signup-username" placeholder="e.g., aperera" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signup-password" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="signup-role" required>
+                        <option value="Employee">Employee</option>
+                        <option value="Supervisor">Supervisor</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Request Account Registration</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div id="app-screen" class="hidden">
+        <header>
+            <h1>KTG LEAVE PORTAL</h1>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <button class="btn-notify" onclick="requestNotificationPermission()">Enable Notifications 🔔</button>
+                <div>Hello, <strong id="user-display-name">User</strong></div>
+                <div id="role-display" class="role-badge employee">Employee</div>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Medical Leave Balance</h3>
+                <div class="count" id="medical-remaining">24 Days</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);" id="medical-sub">Used: 0 / Total: 24</div>
+            </div>
+            <div class="stat-card casual">
+                <h3>Casual Leave Balance</h3>
+                <div class="count" id="casual-remaining">21 Days</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);" id="casual-sub">Used: 0 / Total: 21</div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="card" style="margin-bottom:0;">
+                <h2>Apply Leave</h2>
+                <form id="leave-form">
+                    <div class="form-group">
+                        <label>Leave Type</label>
+                        <select id="leave-type" required>
+                            <option value="Medical Leave">Medical Leave</option>
+                            <option value="Casual Leave">Casual Leave</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" id="start-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" id="end-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Number of Leave Days</label>
+                        <input type="number" id="manual-days" min="0.5" step="0.5" placeholder="Enter days (e.g., 1, 2.5)" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Covering Officer (1st Approver)</label>
+                        <select id="covering-officer" required>
+                            <option value="">-- Select Covering Officer --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Reason</label>
+                        <textarea id="reason" rows="2" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Submit Application</button>
+                </form>
+            </div>
+
+            <div class="card" style="margin-bottom:0;">
+                <h2>Leave Application Status</h2>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Applicant</th>
+                                <th>Type & Dates</th>
+                                <th>Requested Days</th>
+                                <th>Covering Officer</th>
+                                <th>Supervisor Status</th>
+                                <th>Action Required</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leave-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Supervisor Management Panel -->
+        <div class="card" id="supervisor-panel">
+            <h2>Supervisor Panel: User Management & Team Overview</h2>
+
+            <!-- Pending Registrations Box -->
+            <div class="pending-box">
+                <h3 style="font-size:1.1rem; margin-bottom:12px; color:#B45309;">⚠️ Pending Sign-Up Approvals</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Username</th>
+                                <th>Requested Role</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pending-users-table-body">
+                            <tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No pending accounts to review.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div style="background:#F8FAFC; padding:16px; border:1px solid var(--border); border-radius:8px; margin-bottom:20px;">
+                <h3 style="font-size:1rem; margin-bottom:12px; color:var(--primary);">Directly Add Member</h3>
+                <form id="add-user-form">
+                    <div class="form-inline-grid">
+                        <div>
+                            <label>Full Name</label>
+                            <input type="text" id="add-fullname" placeholder="John Doe" required>
+                        </div>
+                        <div>
+                            <label>Username</label>
+                            <input type="text" id="add-username" placeholder="johndoe" required>
+                        </div>
+                        <div>
+                            <label>Password</label>
+                            <input type="password" id="add-password" placeholder="Pass123" required>
+                        </div>
+                        <div>
+                            <label>Role</label>
+                            <select id="add-role" required>
+                                <option value="Employee">Employee</option>
+                                <option value="Supervisor">Supervisor</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width:auto; padding:8px 20px;">+ Add Approved Member</button>
+                </form>
+            </div>
+
+            <h3 style="font-size:1rem; margin-bottom:12px; color:var(--primary);">Active Team Balance & Credentials Overview</h3>
+            <div style="overflow-x: auto; margin-bottom:24px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Member Name</th>
+                            <th>Role</th>
+                            <th>Credentials (User / Pass)</th>
+                            <th>Medical Taken</th>
+                            <th>Medical Left</th>
+                            <th>Casual Taken</th>
+                            <th>Casual Left</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="members-table-body"></tbody>
+                </table>
+            </div>
+
+            <div style="background:#F8FAFC; padding:16px; border:1px solid var(--border); border-radius:8px;">
+                <h3 style="font-size:1rem; margin-bottom:12px; color:var(--primary);">Individual Member Leave History</h3>
+                <div class="form-group" style="max-width: 320px;">
+                    <label>Select Member to View Details</label>
+                    <select id="member-inspect-select" onchange="renderIndividualHistory()">
+                        <option value="">-- Select Member --</option>
+                    </select>
+                </div>
+
+                <div style="overflow-x: auto; margin-top: 12px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Leave Type</th>
+                                <th>Dates</th>
+                                <th>Days</th>
+                                <th>Reason</th>
+                                <th>Covering Officer</th>
+                                <th>Supervisor Approval</th>
+                                <th>Supervisor Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="individual-history-body">
+                            <tr><td colspan="7" style="text-align:center; color:var(--text-muted);">Please select a member to view their leave applications.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+        getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot, getDocs, query, where 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Insert your real Firebase configuration credentials here
+    const firebaseConfig = {
+        apiKey: "YOUR_FIREBASE_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_FIREBASE_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_FIREBASE_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const LIMITS = { 'Medical Leave': 24, 'Casual Leave': 21 };
+    let users = [];
+    let leaveRequests = [];
+    let currentUser = JSON.parse(sessionStorage.getItem('sl_current_user_v25')) || null;
+
+    function normalize(str) {
+        return (str || '').toString().trim().toLowerCase();
+    }
+
+    async function initDatabaseDefaults() {
+        try {
+            const q = query(collection(db, "users"), where("username", "==", "imashi"));
+            const snapshot = await getDocs(q);
+            if (snapshot.empty) {
+                await addDoc(collection(db, "users"), {
+                    name: "Imashi (Supervisor)",
+                    username: "imashi",
+                    password: "1999",
+                    role: "Supervisor",
+                    status: "Approved"
+                });
+            }
+        } catch (e) {
+            console.error("Firebase connection initialization error:", e);
+        }
+    }
+
+    onSnapshot(collection(db, "users"), (snapshot) => {
+        users = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (currentUser) {
+            // Update local current user session if modified remotely
+            const refreshedSelf = users.find(u => u.id === currentUser.id);
+            if (refreshedSelf) {
+                currentUser = refreshedSelf;
+                sessionStorage.setItem('sl_current_user_v25', JSON.stringify(currentUser));
+            }
+            populateCoveringOptions();
+            populateInspectOptions();
+            refreshUI();
+        }
+    });
+
+    onSnapshot(collection(db, "leave_requests"), (snapshot) => {
+        leaveRequests = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (currentUser) refreshUI();
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        await initDatabaseDefaults();
+        if (currentUser) showApp(); else showAuth();
+    });
+
+    window.requestNotificationPermission = function() {
+        if ('Notification' in window) {
+            Notification.permission === 'granted' ? alert('Notifications enabled!') : Notification.requestPermission();
+        }
+    };
+
+    window.toggleAuthTab = function(tab) {
+        if (tab === 'login') {
+            document.getElementById('tab-login').classList.add('active');
+            document.getElementById('tab-signup').classList.remove('active');
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('signup-form').classList.add('hidden');
+        } else {
+            document.getElementById('tab-signup').classList.add('active');
+            document.getElementById('tab-login').classList.remove('active');
+            document.getElementById('signup-form').classList.remove('hidden');
+            document.getElementById('login-form').classList.add('hidden');
+        }
+    };
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const un = document.getElementById('login-username').value;
+        const pw = document.getElementById('login-password').value;
+        
+        try {
+            const q = query(collection(db, "users"), where("username", "==", normalize(un)));
+            const res = await getDocs(q);
+            let found = null;
+            res.forEach(d => {
+                if (d.data().password === pw) found = { id: d.id, ...d.data() };
+            });
+
+            if (found) {
+                if (found.status === 'Pending') {
+                    alert('Your account is pending supervisor approval!');
+                    return;
+                }
+                currentUser = found;
+                sessionStorage.setItem('sl_current_user_v25', JSON.stringify(currentUser));
+                showApp();
+            } else {
+                alert('Invalid username or password!');
+            }
+        } catch (err) {
+            alert('Cloud Database Error: Ensure your Firebase config keys are correct.');
+        }
+    });
+
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('signup-fullname').value.trim();
+        const un = normalize(document.getElementById('signup-username').value);
+        const pw = document.getElementById('signup-password').value;
+        const role = document.getElementById('signup-role').value;
+
+        try {
+            const q = query(collection(db, "users"), where("username", "==", un));
+            const res = await getDocs(q);
+            if (!res.empty) return alert('Username already taken!');
+
+            await addDoc(collection(db, "users"), { name, username: un, password: pw, role, status: 'Pending' });
+            document.getElementById('signup-form').reset();
+            alert(`Registration requested for ${name}. Awaiting supervisor approval.`);
+            window.toggleAuthTab('login');
+        } catch (err) {
+            alert('Cloud Storage Write Error.');
+        }
+    });
+
+    document.getElementById('add-user-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('add-fullname').value.trim();
+        const un = normalize(document.getElementById('add-username').value);
+        const pw = document.getElementById('add-password').value;
+        const role = document.getElementById('add-role').value;
+
+        try {
+            const q = query(collection(db, "users"), where("username", "==", un));
+            const res = await getDocs(q);
+            if (!res.empty) return alert('Username already exists!');
+
+            await addDoc(collection(db, "users"), { name, username: un, password: pw, role, status: 'Approved' });
+            document.getElementById('add-user-form').reset();
+            alert(`New ${role} (${name}) added!`);
+        } catch (err) {
+            alert('Cloud Storage Write Error.');
+        }
+    });
+
+    window.approvePendingUser = async (id) => updateDoc(doc(db, "users", id), { status: 'Approved' });
+    window.rejectPendingUser = async (id) => deleteDoc(doc(db, "users", id));
+    
+    // Function to edit a member's full name, username, and password
+    window.editUser = async (userId, oldName, oldUsername, oldPassword) => {
+        const newName = prompt("Edit Full Name:", oldName);
+        if (newName === null) return; // Cancelled
+        
+        const newUsername = prompt("Edit Username:", oldUsername);
+        if (newUsername === null) return;
+        
+        const newPassword = prompt("Edit Password:", oldPassword);
+        if (newPassword === null) return;
+
+        const trimmedName = newName.trim();
+        const trimmedUsername = normalize(newUsername);
+        const trimmedPassword = newPassword.trim();
+
+        if (!trimmedName || !trimmedUsername || !trimmedPassword) {
+            return alert("All fields are required.");
+        }
+
+        try {
+            // Check if updated username conflicts with an existing account
+            if (trimmedUsername !== oldUsername) {
+                const q = query(collection(db, "users"), where("username", "==", trimmedUsername));
+                const res = await getDocs(q);
+                if (!res.empty) return alert("Username already taken by another account!");
+            }
+
+            await updateDoc(doc(db, "users", userId), {
+                name: trimmedName,
+                username: trimmedUsername,
+                password: trimmedPassword
+            });
+
+            // Update existing leave applications tied to the old name
+            if (trimmedName !== oldName) {
+                leaveRequests.forEach(async (req) => {
+                    if (req.applicant === oldName) {
+                        await updateDoc(doc(db, "leave_requests", req.id), { applicant: trimmedName });
+                    }
+                    if (req.coveringOfficer === oldName) {
+                        await updateDoc(doc(db, "leave_requests", req.id), { coveringOfficer: trimmedName });
+                    }
+                });
+            }
+
+            alert("Member details updated successfully!");
+        } catch (err) {
+            alert("Failed to update user details.");
+        }
+    };
+
+    window.removeUser = async (userId) => {
+        if (currentUser && String(userId) === String(currentUser.id)) return alert('Cannot remove active logged-in account.');
+        await deleteDoc(doc(db, "users", userId));
+    };
+
+    window.deleteLeaveRequest = async (id) => deleteDoc(doc(db, "leave_requests", id));
+
+    window.logout = function() {
+        sessionStorage.removeItem('sl_current_user_v25');
+        currentUser = null;
+        showAuth();
+    };
+
+    function showAuth() {
+        document.getElementById('auth-screen').classList.remove('hidden');
+        document.getElementById('app-screen').classList.add('hidden');
+    }
+
+    function showApp() {
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('app-screen').classList.remove('hidden');
+
+        document.getElementById('user-display-name').textContent = currentUser.name;
+        const roleBadge = document.getElementById('role-display');
+        const supPanel = document.getElementById('supervisor-panel');
+
+        if (currentUser.role === 'Supervisor') {
+            roleBadge.textContent = 'Supervisor';
+            roleBadge.className = 'role-badge supervisor';
+            supPanel.classList.remove('hidden');
+            populateInspectOptions();
+        } else {
+            roleBadge.textContent = 'Employee';
+            roleBadge.className = 'role-badge employee';
+            supPanel.classList.add('hidden');
+        }
+
+        populateCoveringOptions();
+        refreshUI();
+    }
+
+    function populateCoveringOptions() {
+        const select = document.getElementById('covering-officer');
+        if (!select) return;
+        const selectedVal = select.value;
+        
+        const approvedUsers = users.filter(u => u.status === 'Approved');
+        select.innerHTML = '<option value="">-- Select Covering Officer --</option>';
+        approvedUsers.forEach(u => {
+            if (!currentUser || normalize(u.username) !== normalize(currentUser.username)) {
+                const opt = document.createElement('option');
+                opt.value = u.name;
+                opt.textContent = `${u.name} (${u.role})`;
+                select.appendChild(opt);
+            }
+        });
+        if (selectedVal) select.value = selectedVal;
+    }
+
+    function populateInspectOptions() {
+        const select = document.getElementById('member-inspect-select');
+        if (!select) return;
+        const currentSelected = select.value;
+        
+        const approvedUsers = users.filter(u => u.status === 'Approved');
+        select.innerHTML = '<option value="">-- Select Member --</option>';
+        approvedUsers.forEach(u => {
+            const opt = document.createElement('option');
+            opt.value = u.name;
+            opt.textContent = `${u.name} (${u.role})`;
+            select.appendChild(opt);
+        });
+        select.value = currentSelected;
+    }
+
+    document.getElementById('leave-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const type = document.getElementById('leave-type').value;
+        const startDate = document.getElementById('start-date').value;
+        const endDate = document.getElementById('end-date').value;
+        const manualDays = parseFloat(document.getElementById('manual-days').value);
+        const coveringOfficer = document.getElementById('covering-officer').value;
+        const reason = document.getElementById('reason').value;
+
+        if (new Date(endDate) < new Date(startDate)) return alert('Invalid dates');
+
+        const used = getUsedDays(type, currentUser.name);
+        if (used + manualDays > LIMITS[type]) return alert('Exceeds balance');
+
+        await addDoc(collection(db, "leave_requests"), {
+            applicant: currentUser.name,
+            type,
+            startDate,
+            endDate,
+            days: manualDays,
+            coveringOfficer,
+            coveringStatus: 'Pending',
+            supervisorStatus: 'Pending',
+            reason
+        });
+
+        document.getElementById('leave-form').reset();
+        alert('Application submitted successfully!');
+    });
+
+    window.setCoveringApproval = async (id, status) => {
+        const payload = { coveringStatus: status };
+        if (status === 'Rejected') payload.supervisorStatus = 'Rejected';
+        await updateDoc(doc(db, "leave_requests", id), payload);
+    };
+
+    window.setSupervisorApproval = async (id, status) => {
+        await updateDoc(doc(db, "leave_requests", id), { supervisorStatus: status });
+    };
+
+    function getUsedDays(type, name) {
+        if (!name) return 0;
+        return leaveRequests
+            .filter(r => normalize(r.applicant) === normalize(name) && r.type === type && r.supervisorStatus === 'Approved')
+            .reduce((sum, r) => sum + Number(r.days || 0), 0);
+    }
+
+    window.renderIndividualHistory = function() {
+        const selectedMember = document.getElementById('member-inspect-select').value;
+        const tbody = document.getElementById('individual-history-body');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+
+        if (!selectedMember) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Select member to inspect.</td></tr>';
+            return;
+        }
+
+        const memberRequests = leaveRequests.filter(r => normalize(r.applicant) === normalize(selectedMember));
+
+        if (memberRequests.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">No records found.</td></tr>`;
+            return;
+        }
+
+        memberRequests.forEach(req => {
+            const cBadge = `<span class="badge badge-${req.coveringStatus.toLowerCase()}">${req.coveringStatus}</span>`;
+            const sBadge = `<span class="badge badge-${req.supervisorStatus.toLowerCase()}">${req.supervisorStatus}</span>`;
+
+            let actionUI = req.coveringStatus === 'Approved' ? `
+                <button class="action-btn btn-approve" onclick="setSupervisorApproval('${req.id}', 'Approved')">Approve ✓</button>
+                <button class="action-btn btn-reject" onclick="setSupervisorApproval('${req.id}', 'Rejected')">Reject ✕</button>
+            ` : `<span style="color:var(--text-muted);">Awaiting Covering Officer</span>`;
+
+            actionUI += `<button class="action-btn btn-delete" onclick="deleteLeaveRequest('${req.id}')">Delete 🗑️</button>`;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${req.type}</strong></td>
+                <td><small>${req.startDate} to ${req.endDate}</small></td>
+                <td><strong>${req.days}</strong> day(s)</td>
+                <td>${req.reason || '-'}</td>
+                <td>${req.coveringOfficer} (${cBadge})</td>
+                <td>${sBadge}</td>
+                <td>${actionUI}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    };
+
+    function refreshUI() {
+        populateCoveringOptions();
+
+        const medUsed = getUsedDays('Medical Leave', currentUser.name);
+        const casUsed = getUsedDays('Casual Leave', currentUser.name);
+
+        document.getElementById('medical-remaining').textContent = `${LIMITS['Medical Leave'] - medUsed} Days`;
+        document.getElementById('medical-sub').textContent = `Used: ${medUsed} / 24`;
+
+        document.getElementById('casual-remaining').textContent = `${LIMITS['Casual Leave'] - casUsed} Days`;
+        document.getElementById('casual-sub').textContent = `Used: ${casUsed} / 21`;
+
+        const tbody = document.getElementById('leave-table-body');
+        tbody.innerHTML = '';
+
+        const visibleRequests = leaveRequests.filter(req => {
+            if (currentUser.role === 'Supervisor') return true;
+            const isApplicant = normalize(req.applicant) === normalize(currentUser.name);
+            const isCovering = normalize(req.coveringOfficer) === normalize(currentUser.name);
+            return isApplicant || isCovering;
+        });
+
+        if (visibleRequests.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">No leave records found.</td></tr>`;
+        }
+
+        visibleRequests.forEach(req => {
+            const isCovering = normalize(req.coveringOfficer) === normalize(currentUser.name);
+            const isSupervisor = currentUser.role === 'Supervisor';
+
+            let cBadge = `<span class="badge badge-${req.coveringStatus.toLowerCase()}">${req.coveringStatus}</span>`;
+            let sBadge = `<span class="badge badge-${req.supervisorStatus.toLowerCase()}">${req.supervisorStatus}</span>`;
+            let actionUI = `<span style="color:var(--text-muted); font-style:italic;">None</span>`;
+
+            if (isCovering && req.coveringStatus === 'Pending') {
+                actionUI = `
+                    <button class="action-btn btn-approve" onclick="setCoveringApproval('${req.id}', 'Approved')">Agree ✓</button>
+                    <button class="action-btn btn-reject" onclick="setCoveringApproval('${req.id}', 'Rejected')">Reject ✕</button>
+                `;
+            } else if (isSupervisor) {
+                if (req.supervisorStatus === 'Pending') {
+                    actionUI = `
+                        <button class="action-btn btn-approve" onclick="setSupervisorApproval('${req.id}', 'Approved')">Approve ✓</button>
+                        <button class="action-btn btn-reject" onclick="setSupervisorApproval('${req.id}', 'Rejected')">Reject ✕</button>
+                    `;
+                } else {
+                    actionUI = `<span style="color:var(--text-muted);">${req.supervisorStatus}</span>`;
+                }
+                actionUI += `<button class="action-btn btn-delete" onclick="deleteLeaveRequest('${req.id}')">Delete 🗑️</button>`;
+            }
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${req.applicant}</strong></td>
+                <td><strong>${req.type}</strong><br><small>${req.startDate} to ${req.endDate}</small></td>
+                <td><strong>${req.days}</strong> day(s)</td>
+                <td>${req.coveringOfficer}<br>${cBadge}</td>
+                <td>${sBadge}</td>
+                <td>${actionUI}</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        if (currentUser.role === 'Supervisor') {
+            const pendingUserBody = document.getElementById('pending-users-table-body');
+            pendingUserBody.innerHTML = '';
+            const pendingUsers = users.filter(u => u.status === 'Pending');
+            
+            if (pendingUsers.length === 0) {
+                pendingUserBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No pending accounts.</td></tr>`;
+            } else {
+                pendingUsers.forEach(u => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${u.name}</strong></td>
+                        <td><code>${u.username}</code></td>
+                        <td>${u.role}</td>
+                        <td>
+                            <button class="action-btn btn-approve" onclick="approvePendingUser('${u.id}')">Approve ✓</button>
+                            <button class="action-btn btn-reject" onclick="rejectPendingUser('${u.id}')">Reject ✕</button>
+                        </td>
+                    `;
+                    pendingUserBody.appendChild(tr);
+                });
+            }
+
+            const mBody = document.getElementById('members-table-body');
+            mBody.innerHTML = '';
+            users.filter(u => u.status === 'Approved').forEach(u => {
+                const medTaken = getUsedDays('Medical Leave', u.name);
+                const casTaken = getUsedDays('Casual Leave', u.name);
+                const isSelf = String(u.id) === String(currentUser.id);
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${u.name}</strong></td>
+                    <td>${u.role}</td>
+                    <td><code>${u.username} / ${u.password}</code></td>
+                    <td><strong style="color:var(--danger);">${medTaken} Days</strong></td>
+                    <td><strong style="color:var(--success);">${LIMITS['Medical Leave'] - medTaken} Left</strong></td>
+                    <td><strong style="color:var(--danger);">${casTaken} Days</strong></td>
+                    <td><strong style="color:var(--success);">${LIMITS['Casual Leave'] - casTaken} Left</strong></td>
+                    <td>
+                        <button class="btn-edit" onclick="editUser('${u.id}', '${u.name.replace(/'/g, "\\'")}', '${u.username.replace(/'/g, "\\'")}', '${u.password.replace(/'/g, "\\'")}')">Edit ✏️</button>
+                        ${isSelf ? '' : `<button class="btn-remove" onclick="removeUser('${u.id}')">Remove ✕</button>`}
+                    </td>
+                `;
+                mBody.appendChild(tr);
+            });
+
+            window.renderIndividualHistory();
+        }
+    }
+</script>
+
+</body>
+</html>
