@@ -1056,7 +1056,6 @@ function startDatabaseListeners() {
                         "sl_current_user_v25",
                         JSON.stringify(currentUser)
                     );
-
                 }
 
                 populateCoveringOptions();
@@ -1068,6 +1067,7 @@ function startDatabaseListeners() {
             console.error("Users listener error:", error);
         }
     );
+
 
     leaveUnsubscribe = onSnapshot(
         collection(db, "leave_requests"),
@@ -1087,22 +1087,6 @@ function startDatabaseListeners() {
         }
     );
 }
-
-if(currentUser) {
-refreshUI();
-}
-
-},
-(error)=>{
-
-console.error(
-"Leave listener error:",
-error
-);
-
-}
-);
-
 
 // ================= START =================
 
