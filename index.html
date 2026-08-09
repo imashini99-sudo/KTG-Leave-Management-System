@@ -348,6 +348,12 @@
     import { 
         getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot, getDocs, query, where 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     // Insert your real Firebase configuration credentials here
     // Import the functions you need from the SDKs you need
@@ -370,12 +376,13 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+const auth = getAuth(app);
 const analytics = getAnalytics(app);
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
 
+    
     const LIMITS = { 'Medical Leave': 24, 'Casual Leave': 21 };
     let users = [];
     let leaveRequests = [];
@@ -449,17 +456,89 @@ const analytics = getAnalytics(app);
     };
 
     document.getElementById('login-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const un = document.getElementById('login-username').value;
-        const pw = document.getElementById('login-password').value;
-        
-        try {
-            const q = query(collection(db, "users"), where("username", "==", normalize(un)));
-            const res = await getDocs(q);
-            let found = null;
-            res.forEach(d => {
-                if (d.data().password === pw) found = { id: d.id, ...d.data() };
-            });
+    e.preventDefault();
+
+    const un = normalize(
+        document.getElementById('login-username').value
+    );
+
+    const pw = document.getElementById('login-password').value;
+
+    if (!un || !pw) {
+        return alert('Please enter username and password.');
+    }
+
+    // Same internal email format used during registration
+    const authEmail = `${un}@ktgleave.local`;
+
+    try {
+        // Login through Firebase Authentication
+        const userCredential = await signInWithEmailAndPassword(
+            auth,
+            authEmail,
+            pw
+        );
+
+        const firebaseUser = userCredential.user;
+
+        // Find the user's profile in Firestore
+        const q = query(
+            collection(db, "users"),
+            where("uid", "==", firebaseUser.uid)
+        );
+
+        const res = await getDocs(q);
+
+        if (res.empty) {
+            await signOut(auth);
+            return alert('User profile not found.');
+        }
+
+        let found = null;
+
+        res.forEach(d => {
+            found = {
+                id: d.id,
+                ...d.data()
+            };
+        });
+
+        // Check supervisor approval
+        if (found.status === 'Pending') {
+            await signOut(auth);
+            alert('Your account is pending supervisor approval!');
+            return;
+        }
+
+        if (found.status !== 'Approved') {
+            await signOut(auth);
+            alert('Your account is not approved.');
+            return;
+        }
+
+        currentUser = found;
+
+        sessionStorage.setItem(
+            'sl_current_user_v25',
+            JSON.stringify(currentUser)
+        );
+
+        showApp();
+
+    } catch (err) {
+        console.error('Login Error:', err);
+
+        if (
+            err.code === 'auth/invalid-credential' ||
+            err.code === 'auth/user-not-found' ||
+            err.code === 'auth/wrong-password'
+        ) {
+            alert('Invalid username or password!');
+        } else {
+            alert('Login failed: ' + err.message);
+        }
+    }
+});
 
             if (found) {
                 if (found.status === 'Pending') {
@@ -477,26 +556,72 @@ const analytics = getAnalytics(app);
         }
     });
 
-    document.getElementById('signup-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('signup-fullname').value.trim();
-        const un = normalize(document.getElementById('signup-username').value);
-        const pw = document.getElementById('signup-password').value;
-        const role = document.getElementById('signup-role').value;
+   document.getElementById('signup-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-        try {
-            const q = query(collection(db, "users"), where("username", "==", un));
-            const res = await getDocs(q);
-            if (!res.empty) return alert('Username already taken!');
+    const name = document.getElementById('signup-fullname').value.trim();
+    const un = normalize(document.getElementById('signup-username').value);
+    const pw = document.getElementById('signup-password').value;
+    const role = document.getElementById('signup-role').value;
 
-            await addDoc(collection(db, "users"), { name, username: un, password: pw, role, status: 'Pending' });
-            document.getElementById('signup-form').reset();
-            alert(`Registration requested for ${name}. Awaiting supervisor approval.`);
-            window.toggleAuthTab('login');
-        } catch (err) {
-            alert('Cloud Storage Write Error.');
+    if (!name || !un || !pw || !role) {
+        return alert('Please fill all fields.');
+    }
+
+    if (pw.length < 6) {
+        return alert('Password must be at least 6 characters.');
+    }
+
+    // Internal email used only for Firebase Authentication
+    const authEmail = `${un}@ktgleave.local`;
+
+    try {
+        // Check whether username already exists in Firestore
+        const q = query(
+            collection(db, "users"),
+            where("username", "==", un)
+        );
+
+        const res = await getDocs(q);
+
+        if (!res.empty) {
+            return alert('Username already taken!');
         }
-    });
+
+        // Create Firebase Authentication account
+        const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            authEmail,
+            pw
+        );
+
+        // Save user profile in Firestore
+        await addDoc(collection(db, "users"), {
+            uid: userCredential.user.uid,
+            name: name,
+            username: un,
+            role: role,
+            status: 'Pending'
+        });
+
+        document.getElementById('signup-form').reset();
+
+        alert(`Registration requested for ${name}. Await supervisor approval.`);
+
+        toggleAuthTab('login');
+
+    } catch (err) {
+        console.error('Sign Up Error:', err);
+
+        if (err.code === 'auth/email-already-in-use') {
+            alert('This username is already registered.');
+        } else if (err.code === 'auth/weak-password') {
+            alert('Password must be at least 6 characters.');
+        } else {
+            alert('Registration failed: ' + err.message);
+        }
+    }
+});
 
     document.getElementById('add-user-form').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -579,11 +704,17 @@ const analytics = getAnalytics(app);
 
     window.deleteLeaveRequest = async (id) => deleteDoc(doc(db, "leave_requests", id));
 
-    window.logout = function() {
-        sessionStorage.removeItem('sl_current_user_v25');
-        currentUser = null;
-        showAuth();
-    };
+   window.logout = async function() {
+    try {
+        await signOut(auth);
+    } catch (err) {
+        console.error('Logout Error:', err);
+    }
+
+    sessionStorage.removeItem('sl_current_user_v25');
+    currentUser = null;
+    showAuth();
+};
 
     function showAuth() {
         document.getElementById('auth-screen').classList.remove('hidden');
