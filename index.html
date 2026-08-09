@@ -1026,68 +1026,67 @@ e
 
 // ================= FIRESTORE LISTENERS =================
 
-onSnapshot(
-collection(db,"users"),
-(snapshot)=>{
+let usersUnsubscribe = null;
+let leaveUnsubscribe = null;
 
-users =
-snapshot.docs.map(
-d=>({
-id:d.id,
-...d.data()
-})
-);
+function startDatabaseListeners() {
 
-if(currentUser) {
+    if (usersUnsubscribe) usersUnsubscribe();
+    if (leaveUnsubscribe) leaveUnsubscribe();
 
-const refreshedSelf =
-users.find(
-u=>u.id === currentUser.id
-);
+    usersUnsubscribe = onSnapshot(
+        collection(db, "users"),
+        (snapshot) => {
 
-if(refreshedSelf) {
+            users = snapshot.docs.map(d => ({
+                id: d.id,
+                ...d.data()
+            }));
 
-currentUser =
-refreshedSelf;
+            if (currentUser) {
 
-sessionStorage.setItem(
-"sl_current_user_v25",
-JSON.stringify(currentUser)
-);
+                const refreshedSelf =
+                    users.find(u => u.id === currentUser.id);
 
+                if (refreshedSelf) {
+
+                    currentUser = refreshedSelf;
+
+                    sessionStorage.setItem(
+                        "sl_current_user_v25",
+                        JSON.stringify(currentUser)
+                    );
+
+                }
+
+                populateCoveringOptions();
+                populateInspectOptions();
+                refreshUI();
+            }
+        },
+        (error) => {
+            console.error("Users listener error:", error);
+        }
+    );
+
+    leaveUnsubscribe = onSnapshot(
+        collection(db, "leave_requests"),
+        (snapshot) => {
+
+            leaveRequests = snapshot.docs.map(d => ({
+                id: d.id,
+                ...d.data()
+            }));
+
+            if (currentUser) {
+                refreshUI();
+            }
+        },
+        (error) => {
+            console.error("Leave listener error:", error);
+        }
+    );
 }
-
-populateCoveringOptions();
-
-populateInspectOptions();
-
-refreshUI();
-
-}
-
-},
-(error)=>{
-
-console.error(
-"Users listener error:",
-error
-);
-
-}
-);
-
-
-onSnapshot(
-collection(db,"leave_requests"),
-(snapshot)=>{
-
-leaveRequests =
-snapshot.docs.map(
-d=>({
-id:d.id,
-...d.data()
-})
-);
 
 if(currentUser) {
 refreshUI();
@@ -1591,7 +1590,7 @@ document
 // ================= SHOW APP =================
 
 function showApp(){
-
+startDatabaseListeners();
 document
 .getElementById("auth-screen")
 .classList.add("hidden");
