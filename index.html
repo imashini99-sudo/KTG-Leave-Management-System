@@ -1,486 +1,372 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KTG LEAVE PORTAL</title>
-<style>
-:root{--primary:#1E3A8A;--primary-hover:#1D4ED8;--bg:#F1F5F9;--card:#fff;--text:#0F172A;--muted:#64748B;--success:#10B981;--warning:#F59E0B;--danger:#EF4444;--border:#E2E8F0}
-*{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,Tahoma,sans-serif}
-body{background:var(--bg);color:var(--text);padding:20px}.container{max-width:1200px;margin:auto}
-.hidden{display:none!important}.auth-container{max-width:430px;margin:35px auto;background:#fff;border-radius:12px;box-shadow:0 4px 14px #0002;overflow:hidden}
-.auth-header-img{width:100%;height:140px;object-fit:cover}.auth-content{padding:24px 30px 30px}.auth-content h2{text-align:center;color:var(--primary);margin-bottom:16px}
-.auth-toggle{display:flex;border-bottom:2px solid var(--border);margin-bottom:20px}.auth-toggle button{flex:1;padding:10px;border:0;background:none;color:var(--muted);font-weight:600;cursor:pointer}.auth-toggle .active{color:var(--primary);border-bottom:2px solid var(--primary)}
-header{display:flex;justify-content:space-between;align-items:center;gap:15px;background:#fff;padding:16px 20px;border-radius:8px;box-shadow:0 1px 3px #0001;margin-bottom:20px}
-.header-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.role-badge,.notif-badge{padding:6px 12px;border-radius:20px;font-weight:700;font-size:.8rem}.employee{background:#DBEAFE;color:var(--primary)}.supervisor{background:#FEF3C7;color:#D97706}
-button{cursor:pointer}.btn-primary{background:var(--primary);color:white;border:0;border-radius:6px;padding:10px 16px;font-weight:600}.btn-primary:hover{background:var(--primary-hover)}
-.btn-secondary{background:#E2E8F0;color:var(--text);border:0;border-radius:6px;padding:10px 16px;font-weight:600}
-.btn-danger{background:var(--danger);color:white;border:0;border-radius:6px;padding:7px 12px}.btn-warning{background:var(--warning);color:white;border:0;border-radius:6px;padding:7px 12px}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px}.stat-card,.card{background:#fff;border-radius:8px;box-shadow:0 1px 3px #0001}.stat-card{padding:20px;border-top:4px solid var(--primary)}.stat-card.casual{border-color:#8B5CF6}.stat-card h3{font-size:.85rem;color:var(--muted);text-transform:uppercase}.count{font-size:1.8rem;font-weight:bold;margin-top:8px}
-.main-grid{display:grid;grid-template-columns:1fr 2fr;gap:24px}.card{padding:24px;margin-bottom:24px}.card h2{font-size:1.2rem;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:8px}
-.form-group{margin-bottom:15px}label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px}input,select,textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;font-size:.9rem}
-.form-inline-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.84rem;text-align:left}th,td{padding:10px;border-bottom:1px solid var(--border);vertical-align:middle}th{background:#F8FAFC;color:var(--muted)}
-.badge{padding:3px 7px;border-radius:12px;font-size:.72rem;font-weight:600;display:inline-block}.badge-pending{background:#FEF3C7;color:#D97706}.badge-approved{background:#D1FAE5;color:#059669}.badge-rejected{background:#FEE2E2;color:#DC2626}
-.action-btn{padding:5px 8px;font-size:.74rem;border:0;border-radius:4px;color:#fff;margin:2px}.approve{background:var(--success)}.reject{background:var(--danger)}.remove{background:#6B7280}
-.notification-box{position:relative}.notification-list{position:absolute;right:0;top:40px;width:360px;max-height:420px;overflow:auto;background:white;border:1px solid var(--border);border-radius:8px;box-shadow:0 5px 20px #0002;z-index:50;padding:10px}.notification-item{padding:10px;border-bottom:1px solid var(--border);font-size:.85rem}.notification-item.unread{background:#EFF6FF}.small{font-size:.78rem;color:var(--muted)}
-.pending-box{background:#FEF3C7;border:2px solid #F59E0B;border-radius:8px;padding:16px;margin-bottom:20px}
-.modal{position:fixed;inset:0;background:#0006;display:flex;align-items:center;justify-content:center;z-index:100;padding:15px;overflow:auto}.modal-box{background:#fff;border-radius:10px;padding:24px;max-width:430px;width:100%;max-height:90vh;overflow:auto}
-.autocomplete-box{position:relative}.autocomplete-list{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:6px;box-shadow:0 4px 14px #0002;max-height:220px;overflow:auto;z-index:40}
-.autocomplete-item{padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--border)}.autocomplete-item:last-child{border-bottom:0}.autocomplete-item:hover{background:#F1F5F9}.autocomplete-item strong{display:block;font-size:.88rem}.autocomplete-item .small{display:block;margin-top:2px}
-@media(max-width:768px){.main-grid{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}.notification-list{position:fixed;left:10px;right:10px;width:auto}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KTG Leave Portal</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f0f2f5; }
+        .card { background: white; padding: 25px; border-radius: 10px; max-width: 700px; margin: 15px auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h3, h4 { margin-top: 0; color: #1a73e8; }
+        input, select, button { width: 100%; padding: 10px; margin: 6px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
+        button { background-color: #1a73e8; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button:hover { background-color: #1557b0; }
+        .btn-edit { background-color: #ffc107; color: #000; padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; }
+        .btn-edit:hover { background-color: #e0a800; }
+        .btn-secondary { background-color: #6c757d; }
+        .btn-secondary:hover { background-color: #5a6268; }
+        .link-btn { background: none; color: #1a73e8; border: none; text-align: right; font-size: 0.9em; cursor: pointer; text-decoration: underline; padding: 0; }
+        
+        /* Table Styles */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9em; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f8f9fa; color: #333; }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 450px; margin: 10% auto; }
+        hr { border: 0; border-top: 1px solid #e0e0e0; margin: 20px 0; }
+    </style>
 </head>
 <body>
-<div class="container">
 
-<div id="auth-screen" class="auth-container">
-<img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=600&q=80" class="auth-header-img">
-<div class="auth-content">
-<h2>KTG LEAVE PORTAL</h2>
-<div class="auth-toggle">
-<button id="tab-login" class="active" onclick="toggleAuthTab('login')">Log In</button>
-<button id="tab-signup" onclick="toggleAuthTab('signup')">Sign Up</button>
-</div>
+    <!-- 1. LOGIN FORM -->
+    <div class="card" id="loginCard">
+        <h3>KTG Leave Portal - Login</h3>
+        <input type="text" id="loginUsername" placeholder="Username (e.g. nimal)" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button onclick="handleLogin()">Login</button>
+        <button class="link-btn" onclick="toggleForgotPassword(true)">Forgot Password?</button>
+    </div>
 
-<form id="login-form">
-<div class="form-group"><label>Username</label><input id="login-username" required></div>
-<div class="form-group"><label>Password</label><input id="login-password" type="password" required></div>
-<button class="btn-primary" style="width:100%">Log In</button>
-</form>
+    <!-- 2. FORGOT PASSWORD FORM -->
+    <div class="card" id="forgotCard" style="display: none;">
+        <h3>Reset Password</h3>
+        <p style="font-size: 0.85em; color: #666;">ඔබගේ Username එක ඇතුළත් කරන්න. Personal Email එකට Reset Link එක එවනු ලැබේ.</p>
+        <input type="text" id="forgotUsername" placeholder="Enter Username">
+        <button onclick="handleForgotPassword()">Send Reset Link</button>
+        <button class="link-btn" onclick="toggleForgotPassword(false)">Back to Login</button>
+    </div>
 
-<form id="signup-form" class="hidden">
-<div class="form-group"><label>Full Name</label><input id="signup-fullname" required></div>
-<div class="form-group"><label>Designation</label><input id="signup-designation" placeholder="e.g. Management Service Officer" required></div>
-<div class="form-group"><label>Username</label><input id="signup-username" required></div>
-<div class="form-group"><label>Password</label><input id="signup-password" type="password" minlength="6" required>
-<div class="small" style="margin-top:4px">At least 6 characters, with letters and numbers.</div></div>
-<div class="form-group"><label>Role</label><select id="signup-role"><option value="Employee">Employee</option><option value="Supervisor">Supervisor</option></select></div>
-<button class="btn-primary" style="width:100%">Request Account Registration</button>
-</form>
-</div>
-</div>
+    <!-- 3. DASHBOARD / USER PROFILE -->
+    <div class="card" id="dashboardCard" style="display: none;">
+        <h3>Welcome, <span id="userDisplayName"></span>!</h3>
+        <p><strong>Username:</strong> <span id="userDisplayUsername"></span></p>
+        <p><strong>Personal Email:</strong> <span id="userDisplayEmail"></span></p>
+        <button onclick="handleLogout()" style="background-color: #dc3545;">Logout</button>
 
-<div id="app-screen" class="hidden">
-<header>
-<div><h1>KTG LEAVE PORTAL</h1><div class="small">Leave Management System</div></div>
-<div class="header-actions">
-<div class="notification-box">
-<button id="notification-btn" class="btn-warning" onclick="toggleNotifications()">🔔 <span id="notification-count">0</span></button>
-<div id="notification-list" class="notification-list hidden"></div>
-</div>
-<button class="btn-warning" onclick="requestBrowserNotifications()">Enable Browser Notifications</button>
-<span>Hello, <strong id="user-display-name"></strong></span>
-<span id="role-display" class="role-badge employee">Employee</span>
-<button class="btn-danger" onclick="logout()">Logout</button>
-</div>
-</header>
+        <hr>
+        <h4>Edit My Profile</h4>
+        <input type="text" id="myProfileName" placeholder="Full Name">
+        <input type="email" id="myProfileEmail" placeholder="Personal Email Address">
+        <button onclick="handleSaveMyProfile()" style="background-color: #28a745;">Update Profile</button>
 
-<div class="stats-grid">
-<div class="stat-card"><h3>Medical Leave Balance</h3><div class="count" id="medical-remaining">24 Days</div><div class="small" id="medical-sub">Used: 0 / Total: 24</div></div>
-<div class="stat-card casual"><h3>Casual Leave Balance</h3><div class="count" id="casual-remaining">21 Days</div><div class="small" id="casual-sub">Used: 0 / Total: 21</div></div>
-</div>
+        <hr>
+        <h4>Change Password</h4>
+        <input type="password" id="currentPasswordForPass" placeholder="Current Password">
+        <input type="password" id="newPassword" placeholder="New Password">
+        <button onclick="handleChangePassword()">Update Password</button>
+    </div>
 
-<div class="main-grid">
-<div class="card">
-<h2>Apply Leave</h2>
-<form id="leave-form">
-<div class="form-group"><label>Leave Type</label><select id="leave-type"><option>Medical Leave</option><option>Casual Leave</option></select></div>
-<div class="form-group"><label>Start Date</label><input type="date" id="start-date" required></div>
-<div class="form-group"><label>End Date</label><input type="date" id="end-date" required></div>
-<div class="form-group"><label>Number of Leave Days</label><input type="number" id="manual-days" min=".5" step=".5" required></div>
-<div class="form-group"><label>Covering Officer (1st Approver)</label>
-<div class="autocomplete-box">
-<input id="covering-officer-search" type="text" placeholder="Type a name to search..." autocomplete="off">
-<input type="hidden" id="covering-officer">
-<div id="covering-officer-list" class="autocomplete-list hidden"></div>
-</div></div>
-<div class="form-group"><label>Reason</label><textarea id="reason" rows="3" required></textarea></div>
-<button class="btn-primary" style="width:100%">Submit Application</button>
-</form>
-</div>
+    <!-- 4. SUPERVISOR CONTROL PANEL -->
+    <div class="card" id="supervisorCard" style="display: none; border-top: 4px solid #1a73e8;">
+        <h3>Supervisor Control Panel</h3>
+        
+        <h4>All Members List (Edit Details)</h4>
+        <button onclick="loadMembersList()" class="btn-secondary" style="width: auto; padding: 6px 12px; margin-bottom: 10px;">Refresh List</button>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Name</th>
+                    <th>Personal Email</th>
+                    <th>Role</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="membersTableBody">
+                <tr><td colspan="5">Loading members...</td></tr>
+            </tbody>
+        </table>
 
-<div class="card">
-<h2>Leave Application Status</h2>
-<div class="table-wrap"><table><thead><tr><th>Applicant</th><th>Type & Dates</th><th>Days</th><th>Covering Officer</th><th>Supervisor</th><th>Action</th></tr></thead><tbody id="leave-table-body"></tbody></table></div>
-</div>
-</div>
+        <hr>
+        <h4>Add New Member</h4>
+        <input type="text" id="newMemberName" placeholder="Full Name">
+        <input type="text" id="newMemberUsername" placeholder="Username (lowercase)">
+        <input type="email" id="newMemberEmail" placeholder="Personal Email">
+        <input type="password" id="newMemberPassword" placeholder="Initial Password">
+        <select id="newMemberRole">
+            <option value="Employee">Employee</option>
+            <option value="Supervisor">Supervisor</option>
+        </select>
+        <button onclick="handleAddNewMember()" style="background-color: #17a2b8;">Add Member</button>
+    </div>
 
-<div id="supervisor-panel" class="card hidden">
-<h2>Supervisor Panel</h2>
-<div class="pending-box">
-<h3>⚠️ Pending Sign-Up Approvals</h3>
-<div class="table-wrap"><table><thead><tr><th>Name</th><th>Username</th><th>Designation</th><th>Role</th><th>Action</th></tr></thead><tbody id="pending-users-table-body"></tbody></table></div>
-</div>
+    <!-- 5. EDIT MEMBER MODAL (SUPERVISOR ONLY) -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Member Details</h3>
+            <input type="hidden" id="editDocId">
+            <label style="font-size: 0.85em; font-weight: bold;">Full Name:</label>
+            <input type="text" id="editName">
+            <label style="font-size: 0.85em; font-weight: bold;">Username:</label>
+            <input type="text" id="editUsername">
+            <label style="font-size: 0.85em; font-weight: bold;">Personal Email:</label>
+            <input type="email" id="editEmail">
+            <label style="font-size: 0.85em; font-weight: bold;">Role:</label>
+            <select id="editRole">
+                <option value="Employee">Employee</option>
+                <option value="Supervisor">Supervisor</option>
+            </select>
+            <button onclick="handleSaveMemberEdit()" style="background-color: #28a745; margin-top: 10px;">Save Changes</button>
+            <button onclick="closeEditModal()" class="btn-secondary">Cancel</button>
+        </div>
+    </div>
 
-<div style="background:#F8FAFC;padding:16px;border:1px solid var(--border);border-radius:8px;margin-bottom:20px">
-<h3 style="color:var(--primary);margin-bottom:12px">Directly Add Member</h3>
-<form id="add-user-form">
-<div class="form-inline-grid">
-<div><label>Full Name</label><input id="add-fullname" required></div>
-<div><label>Designation</label><input id="add-designation" required></div>
-<div><label>Username</label><input id="add-username" required></div>
-<div><label>Password</label><input id="add-password" type="password" minlength="6" required></div>
-<div><label>Role</label><select id="add-role"><option>Employee</option><option>Supervisor</option></select></div>
-</div>
-<button class="btn-primary" style="margin-top:12px">+ Add Approved Member</button>
-</form>
-</div>
+    <!-- FIREBASE MODULES -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, 
+            updatePassword, reauthenticateWithCredential, EmailAuthProvider, 
+            signOut, onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { 
+            getFirestore, collection, query, where, getDocs, doc, setDoc, updateDoc, getDoc 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-<h3 style="color:var(--primary);margin-bottom:12px">Active Team</h3>
-<div class="table-wrap"><table><thead><tr><th>Name</th><th>Username</th><th>Designation</th><th>Role</th><th>Medical</th><th>Casual</th><th>Action</th></tr></thead><tbody id="members-table-body"></tbody></table></div>
+        // FIXME: ඔබගේ Firebase Config එක මෙතැනට ඇතුළත් කරන්න
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
 
-<div style="background:#F8FAFC;padding:16px;border:1px solid var(--border);border-radius:8px;margin-top:24px">
-<h3 style="color:var(--primary);margin-bottom:12px">Individual Member Leave History</h3>
-<div class="form-group" style="max-width:350px"><label>Select Member</label><select id="member-inspect-select" onchange="renderIndividualHistory()"></select></div>
-<div class="table-wrap"><table><thead><tr><th>Type</th><th>Dates</th><th>Days</th><th>Reason</th><th>Covering</th><th>Supervisor</th><th>Action</th></tr></thead><tbody id="individual-history-body"></tbody></table></div>
-</div>
-</div>
-</div>
-</div>
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-<div id="reset-member-modal" class="modal hidden">
-<div class="modal-box">
-<h2 style="color:var(--primary);margin-bottom:16px">Reset Member's Password</h2>
-<p class="small" style="margin-bottom:15px">Resetting password for: <strong id="reset-member-name"></strong>.</p>
-<form id="reset-member-form">
-<div class="form-group"><label>New Password</label><input id="reset-member-password" type="password" minlength="6" required></div>
-<div class="form-group"><label>Confirm New Password</label><input id="reset-member-confirm" type="password" minlength="6" required></div>
-<button class="btn-primary" style="width:100%">Reset Password</button>
-<button type="button" class="btn-danger" style="width:100%;margin-top:8px" onclick="closeResetMemberModal()">Cancel</button>
-</form>
-</div>
-</div>
+        // Helper: Username එකෙන් User Record එක සොයාගැනීම
+        async function getUserByUsername(username) {
+            const cleanUsername = username.trim().toLowerCase();
+            const q = query(collection(db, "users"), where("username", "==", cleanUsername));
+            const snapshot = await getDocs(q);
+            if (snapshot.empty) throw new Error("මෙම Username එක සොයාගත නොහැකි විය.");
+            return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+        }
 
-<script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import {getFirestore,collection,addDoc,doc,updateDoc,deleteDoc,onSnapshot,getDocs,query,where,setDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        // --- 1. LOGIN ---
+        window.handleLogin = async function() {
+            const username = document.getElementById("loginUsername").value;
+            const password = document.getElementById("loginPassword").value;
 
-const firebaseConfig={
-  apiKey:"AIzaSyCBvWYIEYA0uBT487wFX-Z8VdazJSWgPJI",
-  authDomain:"ktg-leave-management-system.firebaseapp.com",
-  projectId:"ktg-leave-management-system",
-  storageBucket:"ktg-leave-management-system.firebasestorage.app",
-  messagingSenderId:"584568436311",
-  appId:"1:584568436311:web:fe1ed9b3e6cf95bb709512",
-  measurementId:"G-DKDN4803YD"
-};
+            if (!username || !password) return alert("Username සහ Password ඇතුළත් කරන්න.");
 
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
-const auth=getAuth(app);
+            try {
+                const userData = await getUserByUsername(username);
+                const loginEmail = userData.email || `${username.trim().toLowerCase()}@ktgleave.local`;
+                await signInWithEmailAndPassword(auth, loginEmail, password);
+                alert("Login සාර්ථකයි!");
+            } catch (error) {
+                alert("Login Error: " + error.message);
+            }
+        };
 
-const secondaryApp=initializeApp(firebaseConfig,"SecondaryAdmin");
-const secondaryAuth=getAuth(secondaryApp);
+        // --- 2. FORGOT PASSWORD ---
+        window.handleForgotPassword = async function() {
+            const username = document.getElementById("forgotUsername").value;
+            if (!username) return alert("කරුණාකර Username එක ඇතුළත් කරන්න.");
 
-const LIMITS={"Medical Leave":24,"Casual Leave":21},MAX_SUPERVISORS=5;
-let users=[],leaveRequests=[],notifications=[],currentUser=null;
-let unsubUsers=null,unsubLeaves=null,unsubNotifications=null;
+            try {
+                const userData = await getUserByUsername(username);
+                if (!userData.email || userData.email.includes("@ktgleave.local")) {
+                    return alert("මෙම Account එක සඳහා Personal Email එකක් තවම එකතු කර නැත. Supervisor හමුවන්න.");
+                }
+                await sendPasswordResetEmail(auth, userData.email);
+                alert(`Password Reset Link එක ${userData.email} ලිපිනයට යවන ලදී.`);
+                toggleForgotPassword(false);
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        };
 
-const norm=s=>(s||"").toString().trim().toLowerCase();
-const badge=s=>`<span class="badge badge-${String(s).toLowerCase()}">${s}</span>`;
-const makeEmail=u=>`${norm(u)}@ktgportal.local`;
+        // --- 3. USER SELF PROFILE UPDATE ---
+        window.handleSaveMyProfile = async function() {
+            const name = document.getElementById("myProfileName").value;
+            const email = document.getElementById("myProfileEmail").value;
+            const user = auth.currentUser;
 
-function showAuth(){document.getElementById("auth-screen").classList.remove("hidden");document.getElementById("app-screen").classList.add("hidden")}
-function showApp(){
-  document.getElementById("auth-screen").classList.add("hidden");document.getElementById("app-screen").classList.remove("hidden");
-  document.getElementById("user-display-name").textContent=currentUser.name;
-  const rb=document.getElementById("role-display");rb.textContent=currentUser.role;rb.className="role-badge "+(currentUser.role==="Supervisor"?"supervisor":"employee");
-  document.getElementById("supervisor-panel").classList.toggle("hidden",currentUser.role!=="Supervisor");
-  startListeners();refreshUI();
-}
+            if (!name || !email) return alert("Name සහ Email දෙකම ඇතුළත් කරන්න.");
 
-function startListeners(){
-  if(unsubUsers)unsubUsers();if(unsubLeaves)unsubLeaves();if(unsubNotifications)unsubNotifications();
-  unsubUsers=onSnapshot(collection(db,"users"),s=>{
-    users=s.docs.map(d=>({id:d.id,...d.data()}));
-    const me=users.find(u=>u.id===(currentUser?.id||auth.currentUser?.uid));
-    if(me){currentUser=me;}
-    refreshUI();
-  });
-  unsubLeaves=onSnapshot(collection(db,"leave_requests"),s=>{leaveRequests=s.docs.map(d=>({id:d.id,...d.data()}));refreshUI()});
-  if(auth.currentUser){
-    const q=query(collection(db,"notifications"),where("userId","==",auth.currentUser.uid));
-    unsubNotifications=onSnapshot(q,s=>{
-      notifications=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-      renderNotifications();
-    });
-  }
-}
+            try {
+                await updateDoc(doc(db, "users", user.uid), {
+                    name: name.trim(),
+                    email: email.trim()
+                });
+                alert("ඔබගේ Profile එක සාර්ථකව Update විය!");
+                location.reload();
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        };
 
-let coveringOptionsCache=[];
-function populateCovering(){
-  coveringOptionsCache=users.filter(u=>u.status==="Approved"&&u.id!==currentUser?.id);
-  const hidden=document.getElementById("covering-officer"),search=document.getElementById("covering-officer-search");
-  if(!hidden||!search)return;
-  if(hidden.value&&!coveringOptionsCache.some(u=>u.id===hidden.value)){hidden.value="";search.value=""}
-}
+        // --- 4. SUPERVISOR: LOAD MEMBERS TABLE ---
+        window.loadMembersList = async function() {
+            const tbody = document.getElementById("membersTableBody");
+            tbody.innerHTML = "<tr><td colspan='5'>Loading members...</td></tr>";
 
-function renderCoveringSuggestions(filterText){
-  const list=document.getElementById("covering-officer-list");if(!list)return;
-  const term=norm(filterText);
-  const matches=term?coveringOptionsCache.filter(u=>norm(u.name).includes(term)||norm(u.designation||"").includes(term)):coveringOptionsCache;
-  list.innerHTML=matches.length
-   ?matches.map(u=>`<div class="autocomplete-item" onclick="selectCoveringOfficer('${u.id}')"><strong>${u.name}</strong><span class="small">${u.designation||"Not specified"} (${u.role})</span></div>`).join("")
-   :'<div class="autocomplete-item small">No matching officers found.</div>';
-  list.classList.remove("hidden");
-}
+            try {
+                const querySnapshot = await getDocs(collection(db, "users"));
+                let html = "";
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    html += `
+                        <tr>
+                            <td><strong>${data.username || ''}</strong></td>
+                            <td>${data.name || ''}</td>
+                            <td>${data.email || ''}</td>
+                            <td>${data.role || 'Employee'}</td>
+                            <td>
+                                <button class="btn-edit" onclick="openEditModal('${docSnap.id}', '${data.name || ''}', '${data.username || ''}', '${data.email || ''}', '${data.role || 'Employee'}')">Edit</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html || "<tr><td colspan='5'>No members found.</td></tr>";
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan='5'>Error loading members: ${error.message}</td></tr>`;
+            }
+        };
 
-window.selectCoveringOfficer=id=>{
-  const u=coveringOptionsCache.find(x=>x.id===id);if(!u)return;
-  document.getElementById("covering-officer").value=u.id;
-  document.getElementById("covering-officer-search").value=`${u.name} — ${u.designation||"Not specified"} (${u.role})`;
-  document.getElementById("covering-officer-list").classList.add("hidden");
-};
+        // --- 5. SUPERVISOR: EDIT MEMBER MODAL LOGIC ---
+        window.openEditModal = function(docId, name, username, email, role) {
+            document.getElementById("editDocId").value = docId;
+            document.getElementById("editName").value = name;
+            document.getElementById("editUsername").value = username;
+            document.getElementById("editEmail").value = email;
+            document.getElementById("editRole").value = role;
+            document.getElementById("editModal").style.display = "block";
+        };
 
-document.getElementById("covering-officer-search").addEventListener("input",e=>{
-  document.getElementById("covering-officer").value="";
-  renderCoveringSuggestions(e.target.value);
-});
-document.getElementById("covering-officer-search").addEventListener("focus",e=>{renderCoveringSuggestions(e.target.value)});
-document.addEventListener("click",e=>{
-  const box=document.getElementById("covering-officer-search")?.closest(".autocomplete-box");
-  if(box&&!box.contains(e.target))document.getElementById("covering-officer-list").classList.add("hidden");
-});
+        window.closeEditModal = function() {
+            document.getElementById("editModal").style.display = "none";
+        };
 
-function populateMembers(){
-  const el=document.getElementById("member-inspect-select");if(!el)return;const old=el.value;
-  el.innerHTML='<option value="">-- Select Member --</option>';
-  users.filter(u=>u.status==="Approved").forEach(u=>{const o=document.createElement("option");o.value=u.name;o.textContent=`${u.name} — ${u.designation||"Not specified"}`;el.appendChild(o)});
-  el.value=old;
-}
+        window.handleSaveMemberEdit = async function() {
+            const docId = document.getElementById("editDocId").value;
+            const name = document.getElementById("editName").value;
+            const username = document.getElementById("editUsername").value.toLowerCase().trim();
+            const email = document.getElementById("editEmail").value.trim();
+            const role = document.getElementById("editRole").value;
 
-function used(type,name){
-  return leaveRequests.filter(r=>norm(r.applicant)===norm(name)&&r.type===type&&r.supervisorStatus==="Approved").reduce((x,r)=>x+Number(r.days||0),0);
-}
+            if (!name || !username || !email) return alert("සියලුම විස්තර ඇතුළත් කරන්න.");
 
-function supervisorsCount(){return users.filter(u=>u.status==="Approved"&&u.role==="Supervisor").length}
+            try {
+                await updateDoc(doc(db, "users", docId), {
+                    name: name,
+                    username: username,
+                    email: email,
+                    role: role
+                });
+                alert("Member ගේ විස්තර සාර්ථකව Edit කරන ලදී!");
+                closeEditModal();
+                loadMembersList();
+            } catch (error) {
+                alert("Edit Error: " + error.message);
+            }
+        };
 
-async function notify(userId,title,message,leaveId=null){
-  if(!userId||userId===currentUser?.id)return;
-  await addDoc(collection(db,"notifications"),{userId,title,message,leaveId,read:false,createdAt:serverTimestamp()});
-}
+        // --- 6. ADD NEW MEMBER ---
+        window.handleAddNewMember = async function() {
+            const name = document.getElementById("newMemberName").value;
+            const username = document.getElementById("newMemberUsername").value.toLowerCase().trim();
+            const email = document.getElementById("newMemberEmail").value.trim();
+            const password = document.getElementById("newMemberPassword").value;
+            const role = document.getElementById("newMemberRole").value;
 
-async function notifyMany(userIds,title,message,leaveId=null){for(const id of userIds.filter(Boolean))await notify(id,title,message,leaveId)}
+            if (!name || !username || !email || !password) return alert("සියලුම Fields පුරවන්න.");
 
-function renderNotifications(){
-  const unread=notifications.filter(n=>!n.read).length;document.getElementById("notification-count").textContent=unread;
-  const box=document.getElementById("notification-list");box.innerHTML="";
-  if(!notifications.length){box.innerHTML='<div class="notification-item">No notifications.</div>';return}
-  notifications.slice(0,30).forEach(n=>{
-    const d=document.createElement("div");d.className="notification-item "+(!n.read?"unread":"");
-    d.innerHTML=`<strong>${n.title||"Notification"}</strong><br>${n.message}<br><span class="small">${n.createdAt?.toDate?n.createdAt.toDate().toLocaleString():""}</span>`;
-    box.appendChild(d);
-  });
-}
+            try {
+                const q = query(collection(db, "users"), where("username", "==", username));
+                const snap = await getDocs(q);
+                if (!snap.empty) return alert("මෙම Username එක දැනටමත් භාවිතයේ ඇත.");
 
-window.toggleNotifications=async()=>{
-  document.getElementById("notification-list").classList.toggle("hidden");
-  for(const n of notifications.filter(x=>!x.read))await updateDoc(doc(db,"notifications",n.id),{read:true});
-};
+                const newDocRef = doc(collection(db, "users"));
+                await setDoc(newDocRef, {
+                    uid: newDocRef.id,
+                    name: name,
+                    username: username,
+                    email: email,
+                    role: role,
+                    createdAt: new Date()
+                });
 
-window.requestBrowserNotifications=async()=>{
-  if(!("Notification"in window))return alert("This browser does not support notifications.");
-  const p=await Notification.requestPermission();
-  alert(p==="granted"?"Browser notifications enabled.":"Notification permission denied.");
-};
+                alert("නව Member ගේ දත්ත සාර්ථකව Save විය!");
+                loadMembersList();
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        };
 
-window.toggleAuthTab=tab=>{
-  document.getElementById("tab-login").classList.toggle("active",tab==="login");
-  document.getElementById("tab-signup").classList.toggle("active",tab==="signup");
-  document.getElementById("login-form").classList.toggle("hidden",tab!=="login");
-  document.getElementById("signup-form").classList.toggle("hidden",tab!=="signup");
-};
+        // --- 7. CHANGE PASSWORD ---
+        window.handleChangePassword = async function() {
+            const currentPass = document.getElementById("currentPasswordForPass").value;
+            const newPass = document.getElementById("newPassword").value;
+            const user = auth.currentUser;
 
-let resetMemberTarget=null;
-window.openResetMemberModal=(uid,name,username)=>{
-  resetMemberTarget={uid,username};
-  document.getElementById("reset-member-name").textContent=name;
-  document.getElementById("reset-member-modal").classList.remove("hidden");
-};
-window.closeResetMemberModal=()=>{
-  document.getElementById("reset-member-modal").classList.add("hidden");
-  resetMemberTarget=null;
-  document.getElementById("reset-member-form").reset();
-};
+            if (!currentPass || !newPass) return alert("සියලුම Fields පුරවන්න.");
 
-document.getElementById("login-form").onsubmit=async e=>{
-  e.preventDefault();
-  const username=norm(document.getElementById("login-username").value),password=document.getElementById("login-password").value;
-  try{
-    const internalEmail=makeEmail(username);
-    const c=await signInWithEmailAndPassword(auth,internalEmail,password);
-    const uDoc=await getDocs(query(collection(db,"users"),where("uid","==",c.user.uid)));
-    if(!uDoc.empty&&uDoc.docs[0].data().status!=="Approved"){
-      await signOut(auth);
-      return alert("Account pending approval.");
-    }
-  }catch(err){alert("Login failed: Invalid Username or Password.")}
-};
+            try {
+                const credential = EmailAuthProvider.credential(user.email, currentPass);
+                await reauthenticateWithCredential(user, credential);
+                await updatePassword(user, newPass);
+                alert("Password එක සාර්ථකව වෙනස් විය!");
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        };
 
-document.getElementById("signup-form").onsubmit=async e=>{
-  e.preventDefault();
-  const name=document.getElementById("signup-fullname").value.trim(),designation=document.getElementById("signup-designation").value.trim(),username=norm(document.getElementById("signup-username").value),password=document.getElementById("signup-password").value,role=document.getElementById("signup-role").value;
-  if(role==="Supervisor"&&supervisorsCount()>=MAX_SUPERVISORS)return alert("Supervisor limit reached.");
-  try{
-    const uq=query(collection(db,"users"),where("username","==",username));if(!(await getDocs(uq)).empty)return alert("Username already exists.");
-    const internalEmail=makeEmail(username);
-    const c=await createUserWithEmailAndPassword(secondaryAuth,internalEmail,password);
-    await setDoc(doc(db,"users",c.user.uid),{uid:c.user.uid,name,designation,username,email:internalEmail,role,status:"Pending"});
-    await signOut(secondaryAuth);
-    document.getElementById("signup-form").reset();
-    alert("Registration requested. Awaiting supervisor approval.");
-    toggleAuthTab("login");
-  }catch(err){alert("Sign-up failed: "+err.message)}
-};
+        // --- LOGOUT & UI TOGGLES ---
+        window.handleLogout = () => signOut(auth);
+        window.toggleForgotPassword = function(show) {
+            document.getElementById("loginCard").style.display = show ? "none" : "block";
+            document.getElementById("forgotCard").style.display = show ? "block" : "none";
+        };
 
-document.getElementById("leave-form").onsubmit=async e=>{
-  e.preventDefault();
-  const type=document.getElementById("leave-type").value,startDate=document.getElementById("start-date").value,endDate=document.getElementById("end-date").value,days=parseFloat(document.getElementById("manual-days").value),coveringId=document.getElementById("covering-officer").value,reason=document.getElementById("reason").value.trim();
-  if(new Date(endDate)<new Date(startDate))return alert("Invalid date range.");
-  if(used(type,currentUser.name)+days>LIMITS[type])return alert("Exceeds leave balance.");
-  const covering=users.find(u=>u.id===coveringId);if(!covering)return alert("Select covering officer.");
-  try{
-    const ref=await addDoc(collection(db,"leave_requests"),{applicant:currentUser.name,applicantId:currentUser.id,type,startDate,endDate,days,coveringOfficer:covering.name,coveringOfficerId:covering.id,coveringStatus:"Pending",supervisorStatus:"Pending",reason,createdAt:serverTimestamp()});
-    await notify(covering.id,"New Leave Application",`${currentUser.name} requested ${days} day(s) ${type}.`,ref.id);
-    e.target.reset();alert("Leave application submitted.");
-  }catch(err){alert("Submission failed.")}
-};
+        // --- AUTH STATE LISTENER ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                document.getElementById("loginCard").style.display = "none";
+                document.getElementById("forgotCard").style.display = "none";
+                document.getElementById("dashboardCard").style.display = "block";
 
-window.setCoveringApproval=async(id,status)=>{
-  const r=leaveRequests.find(x=>x.id===id);if(!r)return;
-  if(r.coveringOfficerId!==currentUser.id)return alert("Unauthorized.");
-  try{
-    await updateDoc(doc(db,"leave_requests",id),{coveringStatus:status});
-    await notify(r.applicantId,"Covering Response",`Covering Officer marked leave as ${status}.`,id);
-    if(status==="Approved"){
-      const supervisors=users.filter(u=>u.status==="Approved"&&u.role==="Supervisor").map(u=>u.id);
-      await notifyMany(supervisors,"Leave Ready for Approval",`${r.applicant}'s leave was endorsed by ${r.coveringOfficer}.`,id);
-    }
-    alert(`Covering marked as ${status}.`);
-  }catch(err){alert("Update failed.")}
-};
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    document.getElementById("userDisplayName").innerText = data.name || data.username;
+                    document.getElementById("userDisplayUsername").innerText = data.username;
+                    document.getElementById("userDisplayEmail").innerText = data.email || 'Not assigned';
 
-window.setSupervisorApproval=async(id,status)=>{
-  const r=leaveRequests.find(x=>x.id===id);if(!r||currentUser.role!=="Supervisor")return;
-  try{
-    await updateDoc(doc(db,"leave_requests",id),{supervisorStatus:status});
-    await notify(r.applicantId,"Leave Final Decision",`Supervisor has ${status} your leave application.`,id);
-    alert(`Leave status set to ${status}.`);
-  }catch(err){alert("Update failed.")}
-};
+                    // Self profile edit input values
+                    document.getElementById("myProfileName").value = data.name || '';
+                    document.getElementById("myProfileEmail").value = data.email || '';
 
-window.removeLeave=async id=>{
-  const r=leaveRequests.find(x=>x.id===id);
-  if(!r)return;
-  if(r.applicantId!==currentUser.id && currentUser.role!=="Supervisor") return alert("Unauthorized.");
-  if(!confirm("Remove leave entry?"))return;
-  try{await deleteDoc(doc(db,"leave_requests",id));alert("Deleted.")}catch(e){alert("Delete failed.")}
-};
-
-window.setUserStatus=async(uid,status)=>{
-  if(currentUser.role!=="Supervisor")return alert("Unauthorized.");
-  try{await updateDoc(doc(db,"users",uid),{status});alert(`User status: ${status}`)}catch(e){alert("Failed.")}
-};
-
-window.removeUser=async uid=>{
-  if(currentUser.role!=="Supervisor")return alert("Unauthorized.");
-  if(!confirm("Delete user profile?"))return;
-  try{await deleteDoc(doc(db,"users",uid));alert("User deleted.")}catch(e){alert("Failed.")}
-};
-
-document.getElementById("add-user-form").onsubmit=async e=>{
-  e.preventDefault();
-  if(currentUser.role!=="Supervisor")return alert("Unauthorized.");
-  const name=document.getElementById("add-fullname").value.trim(),designation=document.getElementById("add-designation").value.trim(),username=norm(document.getElementById("add-username").value),password=document.getElementById("add-password").value,role=document.getElementById("add-role").value;
-  if(role==="Supervisor"&&supervisorsCount()>=MAX_SUPERVISORS)return alert("Max supervisors limit reached.");
-  try{
-    const internalEmail=makeEmail(username);
-    const c=await createUserWithEmailAndPassword(secondaryAuth,internalEmail,password);
-    await setDoc(doc(db,"users",c.user.uid),{uid:c.user.uid,name,designation,username,email:internalEmail,role,status:"Approved"});
-    await signOut(secondaryAuth);
-    e.target.reset();alert("User registered directly.");
-  }catch(err){alert("Failed: "+err.message)}
-};
-
-window.logout=()=>signOut(auth);
-
-function refreshUI(){
-  if(!currentUser)return;
-  const mUsed=used("Medical Leave",currentUser.name),cUsed=used("Casual Leave",currentUser.name);
-  document.getElementById("medical-remaining").textContent=`${LIMITS["Medical Leave"]-mUsed} Days`;
-  document.getElementById("medical-sub").textContent=`Used: ${mUsed} / Total: ${LIMITS["Medical Leave"]}`;
-  document.getElementById("casual-remaining").textContent=`${LIMITS["Casual Leave"]-cUsed} Days`;
-  document.getElementById("casual-sub").textContent=`Used: ${cUsed} / Total: ${LIMITS["Casual Leave"]}`;
-  
-  populateCovering();
-  
-  const leavesTable=document.getElementById("leave-table-body");
-  const visibleLeaves=currentUser.role==="Supervisor" 
-    ? leaveRequests 
-    : leaveRequests.filter(r=>r.applicantId===currentUser.id||r.coveringOfficerId===currentUser.id);
-    
-  leavesTable.innerHTML=visibleLeaves.map(r=>{
-    let actions="";
-    if(r.coveringOfficerId===currentUser.id && r.coveringStatus==="Pending"){
-      actions+=`<button class="action-btn approve" onclick="setCoveringApproval('${r.id}','Approved')">Endorse</button><button class="action-btn reject" onclick="setCoveringApproval('${r.id}','Rejected')">Reject</button>`;
-    }
-    if(currentUser.role==="Supervisor" && r.supervisorStatus==="Pending"){
-      actions+=`<button class="action-btn approve" onclick="setSupervisorApproval('${r.id}','Approved')">Approve</button><button class="action-btn reject" onclick="setSupervisorApproval('${r.id}','Rejected')">Reject</button>`;
-    }
-    if(r.applicantId===currentUser.id || currentUser.role==="Supervisor"){
-      actions+=`<button class="action-btn remove" onclick="removeLeave('${r.id}')">Delete</button>`;
-    }
-    return `<tr><td>${r.applicant}</td><td>${r.type}<br><span class="small">${r.startDate} to ${r.endDate}</span></td><td>${r.days}</td><td>${r.coveringOfficer}<br>${badge(r.coveringStatus)}</td><td>${badge(r.supervisorStatus)}</td><td>${actions||"-"}</td></tr>`;
-  }).join("")||'<tr><td colspan="6">No leave applications.</td></tr>';
-
-  if(currentUser.role==="Supervisor"){
-    populateMembers();
-    
-    const pendingTable=document.getElementById("pending-users-table-body");
-    const pendingUsers=users.filter(u=>u.status==="Pending");
-    pendingTable.innerHTML=pendingUsers.map(u=>`<tr><td>${u.name}</td><td>${u.username}</td><td>${u.designation||"-"}</td><td>${u.role}</td><td><button class="action-btn approve" onclick="setUserStatus('${u.id}','Approved')">Approve</button><button class="action-btn reject" onclick="removeUser('${u.id}')">Reject</button></td></tr>`).join("")||'<tr><td colspan="5">No pending sign-ups.</td></tr>';
-
-    const membersTable=document.getElementById("members-table-body");
-    const activeUsers=users.filter(u=>u.status==="Approved");
-    membersTable.innerHTML=activeUsers.map(u=>{
-      const mU=used("Medical Leave",u.name),cU=used("Casual Leave",u.name);
-      return `<tr><td>${u.name}</td><td>${u.username}</td><td>${u.designation||"-"}</td><td>${u.role}</td><td>${LIMITS["Medical Leave"]-mU} / ${LIMITS["Medical Leave"]}</td><td>${LIMITS["Casual Leave"]-cU} / ${LIMITS["Casual Leave"]}</td><td><button class="action-btn approve" onclick="openResetMemberModal('${u.id}','${u.name.replace(/'/g,"\\\'")}','${u.username}')">Reset PW</button><button class="action-btn reject" onclick="removeUser('${u.id}')">Delete</button></td></tr>`;
-    }).join("")||'<tr><td colspan="7">No active members.</td></tr>';
-
-    window.renderIndividualHistory();
-  }
-}
-
-window.renderIndividualHistory=()=>{
-  const name=document.getElementById("member-inspect-select")?.value;
-  const tbody=document.getElementById("individual-history-body");
-  if(!tbody)return;
-  if(!name){tbody.innerHTML='<tr><td colspan="7">Select a member above to inspect history.</td></tr>';return}
-  const history=leaveRequests.filter(r=>norm(r.applicant)===norm(name));
-  tbody.innerHTML=history.map(r=>`<tr><td>${r.type}</td><td>${r.startDate} to ${r.endDate}</td><td>${r.days}</td><td>${r.reason||"-"}</td><td>${r.coveringOfficer}<br>${badge(r.coveringStatus)}</td><td>${badge(r.supervisorStatus)}</td><td><button class="action-btn remove" onclick="removeLeave('${r.id}')">Delete</button></td></tr>`).join("")||'<tr><td colspan="7">No history for this member.</td></tr>';
-};
-
-onAuthStateChanged(auth,async user=>{
-  if(user){
-    const s=await getDocs(query(collection(db,"users"),where("uid","==",user.uid)));
-    if(!s.empty){
-      currentUser={id:s.docs[0].id,...s.docs[0].data()};
-      if(currentUser.status==="Approved"){
-        showApp();
-      }else{
-        await signOut(auth);
-        showAuth();
-        alert("Account pending supervisor approval.");
-      }
-    }else{
-      showAuth();
-    }
-  }else{
-    currentUser=null;
-    showAuth();
-  }
-});
-</script>
+                    // Supervisor Access Control
+                    if (data.role === "Supervisor" || data.role === "Admin") {
+                        document.getElementById("supervisorCard").style.display = "block";
+                        loadMembersList();
+                    }
+                }
+            } else {
+                document.getElementById("loginCard").style.display = "block";
+                document.getElementById("dashboardCard").style.display = "none";
+                document.getElementById("supervisorCard").style.display = "none";
+            }
+        });
+    </script>
 </body>
 </html>
