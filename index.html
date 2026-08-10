@@ -4,369 +4,512 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KTG Leave Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f0f2f5; }
-        .card { background: white; padding: 25px; border-radius: 10px; max-width: 700px; margin: 15px auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h3, h4 { margin-top: 0; color: #1a73e8; }
-        input, select, button { width: 100%; padding: 10px; margin: 6px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
-        button { background-color: #1a73e8; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        button:hover { background-color: #1557b0; }
-        .btn-edit { background-color: #ffc107; color: #000; padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; }
-        .btn-edit:hover { background-color: #e0a800; }
-        .btn-secondary { background-color: #6c757d; }
-        .btn-secondary:hover { background-color: #5a6268; }
-        .link-btn { background: none; color: #1a73e8; border: none; text-align: right; font-size: 0.9em; cursor: pointer; text-decoration: underline; padding: 0; }
-        
-        /* Table Styles */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9em; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background-color: #f8f9fa; color: #333; }
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
 
-        /* Modal Styles */
-        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
-        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 450px; margin: 10% auto; }
-        hr { border: 0; border-top: 1px solid #e0e0e0; margin: 20px 0; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+        
+        body { 
+            background: var(--bg-gradient); 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px;
+        }
+
+        .container { width: 100%; max-width: 800px; }
+
+        .card { 
+            background: var(--card-bg); 
+            padding: 35px 30px; 
+            border-radius: 16px; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+        }
+
+        .card-header { margin-bottom: 25px; text-align: center; }
+        .card-header h3 { color: var(--text-main); font-size: 1.5rem; font-weight: 700; }
+        .card-header p { color: var(--text-muted); font-size: 0.875rem; margin-top: 6px; }
+
+        .form-group { margin-bottom: 16px; text-align: left; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 6px; }
+        
+        input, select { 
+            width: 100%; 
+            padding: 12px 14px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            font-size: 0.95rem; 
+            outline: none;
+            background-color: #f9fafb;
+        }
+
+        input:focus, select:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); 
+            background-color: #fff;
+        }
+
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            cursor: pointer; 
+            margin-top: 10px;
+        }
+
+        button:hover { background-color: var(--primary-hover); }
+
+        .btn-secondary { background-color: #6b7280; }
+        .btn-secondary:hover { background-color: #4b5563; }
+        .btn-danger { background-color: var(--danger); }
+        .btn-danger:hover { background-color: #dc2626; }
+        .btn-success { background-color: var(--success); }
+        .btn-success:hover { background-color: #059669; }
+
+        .link-btn { 
+            background: none; 
+            color: var(--primary); 
+            border: none; 
+            font-size: 0.875rem; 
+            cursor: pointer; 
+            margin-top: 12px;
+            font-weight: 500;
+        }
+        .link-btn:hover { text-decoration: underline; }
+
+        .table-responsive { overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem; }
+        th, td { padding: 12px; border-bottom: 1px solid var(--border-color); }
+        th { background-color: #f9fafb; font-weight: 600; }
+        
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+        .badge-supervisor { background-color: #e0e7ff; color: #3730a3; }
+        .badge-employee { background-color: #f3f4f6; color: #374151; }
+
+        .divider { height: 1px; background-color: var(--border-color); margin: 25px 0; }
+
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 480px; margin: 8% auto; }
     </style>
 </head>
 <body>
 
-    <!-- 1. LOGIN FORM -->
+<div class="container">
+
+    <!-- 1. LOGIN CARD -->
     <div class="card" id="loginCard">
-        <h3>KTG Leave Portal - Login</h3>
-        <input type="text" id="loginUsername" placeholder="Username (e.g. nimal)" required>
-        <input type="password" id="loginPassword" placeholder="Password" required>
-        <button onclick="handleLogin()">Login</button>
-        <button class="link-btn" onclick="toggleForgotPassword(true)">Forgot Password?</button>
+        <div class="card-header">
+            <h3>KTG Leave Portal</h3>
+            <p>Welcome back! Please enter your details</p>
+        </div>
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="loginUsername" placeholder="e.g. nimal" required>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" required>
+        </div>
+        <button onclick="handleLogin()">Sign In</button>
+        <div style="text-align: center; margin-top: 10px;">
+            <button class="link-btn" onclick="showCard('forgotCard')">Forgot Password?</button> | 
+            <button class="link-btn" onclick="showCard('signupCard')" style="font-weight: 700;">Create New Account</button>
+        </div>
     </div>
 
-    <!-- 2. FORGOT PASSWORD FORM -->
+    <!-- 2. SIGN UP CARD (SELF REGISTER) -->
+    <div class="card" id="signupCard" style="display: none;">
+        <div class="card-header">
+            <h3>Create an Account</h3>
+            <p>Sign up to access the KTG Leave Portal</p>
+        </div>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="signupName" placeholder="e.g. Nimal Perera" required>
+        </div>
+        <div class="form-group">
+            <label>Username (lowercase, no spaces)</label>
+            <input type="text" id="signupUsername" placeholder="e.g. nimal" required>
+        </div>
+        <div class="form-group">
+            <label>Personal Email Address</label>
+            <input type="email" id="signupEmail" placeholder="nimal@gmail.com" required>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="signupPassword" placeholder="Minimum 6 characters" required>
+        </div>
+        <button onclick="handleSignUp()" class="btn-success">Register Account</button>
+        <div style="text-align: center;">
+            <button class="link-btn" onclick="showCard('loginCard')">Already have an account? Sign In</button>
+        </div>
+    </div>
+
+    <!-- 3. FORGOT PASSWORD CARD -->
     <div class="card" id="forgotCard" style="display: none;">
-        <h3>Reset Password</h3>
-        <p style="font-size: 0.85em; color: #666;">ඔබගේ Username එක ඇතුළත් කරන්න. Personal Email එකට Reset Link එක එවනු ලැබේ.</p>
-        <input type="text" id="forgotUsername" placeholder="Enter Username">
+        <div class="card-header">
+            <h3>Reset Password</h3>
+            <p>ඔබගේ Username එක ඇතුළත් කරන්න. Personal Email එකට Reset Link එක එවනු ලැබේ.</p>
+        </div>
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="forgotUsername" placeholder="Enter Username">
+        </div>
         <button onclick="handleForgotPassword()">Send Reset Link</button>
-        <button class="link-btn" onclick="toggleForgotPassword(false)">Back to Login</button>
+        <div style="text-align: center;">
+            <button class="link-btn" onclick="showCard('loginCard')">Back to Login</button>
+        </div>
     </div>
 
-    <!-- 3. DASHBOARD / USER PROFILE -->
+    <!-- 4. USER DASHBOARD -->
     <div class="card" id="dashboardCard" style="display: none;">
-        <h3>Welcome, <span id="userDisplayName"></span>!</h3>
-        <p><strong>Username:</strong> <span id="userDisplayUsername"></span></p>
-        <p><strong>Personal Email:</strong> <span id="userDisplayEmail"></span></p>
-        <button onclick="handleLogout()" style="background-color: #dc3545;">Logout</button>
+        <div class="card-header" style="text-align: left;">
+            <h3>Welcome, <span id="userDisplayName"></span>!</h3>
+            <p>Role: <span id="userDisplayRole" class="badge"></span></p>
+        </div>
+        
+        <p style="margin-bottom: 8px;"><strong>Username:</strong> <span id="userDisplayUsername"></span></p>
+        <p style="margin-bottom: 20px;"><strong>Personal Email:</strong> <span id="userDisplayEmail"></span></p>
+        
+        <button onclick="handleLogout()" class="btn-danger">Logout</button>
 
-        <hr>
+        <div class="divider"></div>
+
         <h4>Edit My Profile</h4>
-        <input type="text" id="myProfileName" placeholder="Full Name">
-        <input type="email" id="myProfileEmail" placeholder="Personal Email Address">
-        <button onclick="handleSaveMyProfile()" style="background-color: #28a745;">Update Profile</button>
+        <div class="form-group" style="margin-top: 10px;">
+            <label>Full Name</label>
+            <input type="text" id="myProfileName" placeholder="Full Name">
+        </div>
+        <div class="form-group">
+            <label>Personal Email</label>
+            <input type="email" id="myProfileEmail" placeholder="Personal Email Address">
+        </div>
+        <button onclick="handleSaveMyProfile()" class="btn-success">Update Profile</button>
 
-        <hr>
+        <div class="divider"></div>
+
         <h4>Change Password</h4>
-        <input type="password" id="currentPasswordForPass" placeholder="Current Password">
-        <input type="password" id="newPassword" placeholder="New Password">
+        <div class="form-group" style="margin-top: 10px;">
+            <label>Current Password</label>
+            <input type="password" id="currentPasswordForPass" placeholder="Current Password">
+        </div>
+        <div class="form-group">
+            <label>New Password</label>
+            <input type="password" id="newPassword" placeholder="New Password">
+        </div>
         <button onclick="handleChangePassword()">Update Password</button>
     </div>
 
-    <!-- 4. SUPERVISOR CONTROL PANEL -->
-    <div class="card" id="supervisorCard" style="display: none; border-top: 4px solid #1a73e8;">
-        <h3>Supervisor Control Panel</h3>
-        
-        <h4>All Members List (Edit Details)</h4>
-        <button onclick="loadMembersList()" class="btn-secondary" style="width: auto; padding: 6px 12px; margin-bottom: 10px;">Refresh List</button>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Name</th>
-                    <th>Personal Email</th>
-                    <th>Role</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="membersTableBody">
-                <tr><td colspan="5">Loading members...</td></tr>
-            </tbody>
-        </table>
+    <!-- 5. SUPERVISOR CONTROL PANEL -->
+    <div class="card" id="supervisorCard" style="display: none;">
+        <div class="card-header" style="text-align: left;">
+            <h3 style="color: var(--primary);">Supervisor Panel</h3>
+            <p>Manage portal users and permissions</p>
+        </div>
 
-        <hr>
-        <h4>Add New Member</h4>
-        <input type="text" id="newMemberName" placeholder="Full Name">
-        <input type="text" id="newMemberUsername" placeholder="Username (lowercase)">
-        <input type="email" id="newMemberEmail" placeholder="Personal Email">
-        <input type="password" id="newMemberPassword" placeholder="Initial Password">
-        <select id="newMemberRole">
-            <option value="Employee">Employee</option>
-            <option value="Supervisor">Supervisor</option>
-        </select>
-        <button onclick="handleAddNewMember()" style="background-color: #17a2b8;">Add Member</button>
+        <h4>All Members List</h4>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="membersTableBody">
+                    <tr><td colspan="5">Loading members...</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- 5. EDIT MEMBER MODAL (SUPERVISOR ONLY) -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <h3>Edit Member Details</h3>
-            <input type="hidden" id="editDocId">
-            <label style="font-size: 0.85em; font-weight: bold;">Full Name:</label>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <h3>Edit Member Details</h3>
+        <input type="hidden" id="editDocId">
+        <div class="form-group" style="margin-top: 15px;">
+            <label>Full Name</label>
             <input type="text" id="editName">
-            <label style="font-size: 0.85em; font-weight: bold;">Username:</label>
+        </div>
+        <div class="form-group">
+            <label>Username</label>
             <input type="text" id="editUsername">
-            <label style="font-size: 0.85em; font-weight: bold;">Personal Email:</label>
+        </div>
+        <div class="form-group">
+            <label>Personal Email</label>
             <input type="email" id="editEmail">
-            <label style="font-size: 0.85em; font-weight: bold;">Role:</label>
+        </div>
+        <div class="form-group">
+            <label>Role</label>
             <select id="editRole">
                 <option value="Employee">Employee</option>
                 <option value="Supervisor">Supervisor</option>
             </select>
-            <button onclick="handleSaveMemberEdit()" style="background-color: #28a745; margin-top: 10px;">Save Changes</button>
-            <button onclick="closeEditModal()" class="btn-secondary">Cancel</button>
         </div>
+        <button onclick="handleSaveMemberEdit()" class="btn-success">Save Changes</button>
+        <button onclick="closeEditModal()" class="btn-secondary" style="margin-top: 8px;">Cancel</button>
     </div>
+</div>
 
-    <!-- FIREBASE MODULES -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { 
-            getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, 
-            updatePassword, reauthenticateWithCredential, EmailAuthProvider, 
-            signOut, onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { 
-            getFirestore, collection, query, where, getDocs, doc, setDoc, updateDoc, getDoc 
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+<!-- FIREBASE MODULES -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+        getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
+        sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, 
+        EmailAuthProvider, signOut, onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+        getFirestore, collection, query, where, getDocs, doc, setDoc, updateDoc, getDoc 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // FIXME: ඔබගේ Firebase Config එක මෙතැනට ඇතුළත් කරන්න
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
+    // FIXME: ඔබගේ Firebase Config එක මෙතැනට ඇතුළත් කරන්න
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-        // Helper: Username එකෙන් User Record එක සොයාගැනීම
-        async function getUserByUsername(username) {
-            const cleanUsername = username.trim().toLowerCase();
-            const q = query(collection(db, "users"), where("username", "==", cleanUsername));
-            const snapshot = await getDocs(q);
-            if (snapshot.empty) throw new Error("මෙම Username එක සොයාගත නොහැකි විය.");
-            return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+    // --- UI NAVIGATION HELPER ---
+    window.showCard = function(cardId) {
+        document.getElementById("loginCard").style.display = "none";
+        document.getElementById("signupCard").style.display = "none";
+        document.getElementById("forgotCard").style.display = "none";
+        document.getElementById(cardId).style.display = "block";
+    };
+
+    // Helper: Clean Username Lookup
+    async function getUserByUsername(username) {
+        if (!username) throw new Error("කරුණාකර Username එක ඇතුළත් කරන්න.");
+        const cleanUsername = username.trim().toLowerCase();
+        const q = query(collection(db, "users"), where("username", "==", cleanUsername));
+        const snapshot = await getDocs(q);
+        if (snapshot.empty) throw new Error(`'${cleanUsername}' නමින් Username එකක් සොයාගත නොහැකි විය.`);
+        return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+    }
+
+    // --- 1. SIGN UP (NEW ACCOUNT) ---
+    window.handleSignUp = async function() {
+        const name = document.getElementById("signupName").value.trim();
+        const username = document.getElementById("signupUsername").value.toLowerCase().trim();
+        const email = document.getElementById("signupEmail").value.trim();
+        const password = document.getElementById("signupPassword").value;
+
+        if (!name || !username || !email || !password) return alert("කරුණාකර සියලු විස්තර ඇතුළත් කරන්න.");
+
+        try {
+            // Username එක කලින් අරන් තියෙනවාද බලමු
+            const q = query(collection(db, "users"), where("username", "==", username));
+            const snap = await getDocs(q);
+            if (!snap.empty) return alert("මෙම Username එක දැනටමත් වෙනත් අයෙකු භාවිත කරයි. වෙනත් එකක් තෝරන්න.");
+
+            // 1. Firebase Auth එකේ User සාදයි
+            const userCred = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCred.user;
+
+            // 2. Firestore `users` collection එකේ Document එක සාදයි
+            await setDoc(doc(db, "users", user.uid), {
+                uid: user.uid,
+                name: name,
+                username: username,
+                email: email,
+                role: "Employee", // Default එකට හැමෝම Employee වේ
+                createdAt: new Date()
+            });
+
+            alert("Account එක සාර්ථකව සෑදිණි!");
+        } catch (error) {
+            alert("Sign Up Error: " + error.message);
         }
+    };
 
-        // --- 1. LOGIN ---
-        window.handleLogin = async function() {
-            const username = document.getElementById("loginUsername").value;
-            const password = document.getElementById("loginPassword").value;
+    // --- 2. LOGIN ---
+    window.handleLogin = async function() {
+        const username = document.getElementById("loginUsername").value;
+        const password = document.getElementById("loginPassword").value;
 
-            if (!username || !password) return alert("Username සහ Password ඇතුළත් කරන්න.");
+        if (!username || !password) return alert("Username සහ Password ඇතුළත් කරන්න.");
 
-            try {
-                const userData = await getUserByUsername(username);
-                const loginEmail = userData.email || `${username.trim().toLowerCase()}@ktgleave.local`;
-                await signInWithEmailAndPassword(auth, loginEmail, password);
-                alert("Login සාර්ථකයි!");
-            } catch (error) {
-                alert("Login Error: " + error.message);
-            }
-        };
+        try {
+            const userData = await getUserByUsername(username);
+            await signInWithEmailAndPassword(auth, userData.email, password);
+        } catch (error) {
+            alert("Login Failed: " + error.message);
+        }
+    };
 
-        // --- 2. FORGOT PASSWORD ---
-        window.handleForgotPassword = async function() {
-            const username = document.getElementById("forgotUsername").value;
-            if (!username) return alert("කරුණාකර Username එක ඇතුළත් කරන්න.");
+    // --- 3. FORGOT PASSWORD ---
+    window.handleForgotPassword = async function() {
+        const username = document.getElementById("forgotUsername").value;
+        try {
+            const userData = await getUserByUsername(username);
+            await sendPasswordResetEmail(auth, userData.email);
+            alert(`Password Reset Link එක ${userData.email} ලිපිනයට යවන ලදී.`);
+            showCard("loginCard");
+        } catch (error) {
+            alert("Error: " + error.message);
+        }
+    };
 
-            try {
-                const userData = await getUserByUsername(username);
-                if (!userData.email || userData.email.includes("@ktgleave.local")) {
-                    return alert("මෙම Account එක සඳහා Personal Email එකක් තවම එකතු කර නැත. Supervisor හමුවන්න.");
+    // --- 4. PROFILE UPDATE ---
+    window.handleSaveMyProfile = async function() {
+        const name = document.getElementById("myProfileName").value;
+        const email = document.getElementById("myProfileEmail").value;
+        const user = auth.currentUser;
+
+        if (!name || !email) return alert("Name සහ Email දෙකම ඇතුළත් කරන්න.");
+
+        try {
+            await updateDoc(doc(db, "users", user.uid), { name: name.trim(), email: email.trim() });
+            alert("Profile එක සාර්ථකව Update විය!");
+            location.reload();
+        } catch (error) {
+            alert("Error: " + error.message);
+        }
+    };
+
+    // --- 5. SUPERVISOR: MEMBERS LIST ---
+    window.loadMembersList = async function() {
+        const tbody = document.getElementById("membersTableBody");
+        tbody.innerHTML = "<tr><td colspan='5'>Loading members...</td></tr>";
+
+        try {
+            const querySnapshot = await getDocs(collection(db, "users"));
+            let html = "";
+            querySnapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const roleBadge = data.role === 'Supervisor' ? 'badge-supervisor' : 'badge-employee';
+                html += `
+                    <tr>
+                        <td><strong>${data.username || ''}</strong></td>
+                        <td>${data.name || ''}</td>
+                        <td>${data.email || ''}</td>
+                        <td><span class="badge ${roleBadge}">${data.role || 'Employee'}</span></td>
+                        <td>
+                            <button class="btn-secondary" style="padding: 4px 8px; font-size: 0.8rem; width: auto;" onclick="openEditModal('${docSnap.id}', '${data.name || ''}', '${data.username || ''}', '${data.email || ''}', '${data.role || 'Employee'}')">Edit</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html || "<tr><td colspan='5'>No members found.</td></tr>";
+        } catch (error) {
+            tbody.innerHTML = `<tr><td colspan='5'>Error: ${error.message}</td></tr>`;
+        }
+    };
+
+    // --- EDIT MODAL LOGIC ---
+    window.openEditModal = function(docId, name, username, email, role) {
+        document.getElementById("editDocId").value = docId;
+        document.getElementById("editName").value = name;
+        document.getElementById("editUsername").value = username;
+        document.getElementById("editEmail").value = email;
+        document.getElementById("editRole").value = role;
+        document.getElementById("editModal").style.display = "block";
+    };
+
+    window.closeEditModal = function() {
+        document.getElementById("editModal").style.display = "none";
+    };
+
+    window.handleSaveMemberEdit = async function() {
+        const docId = document.getElementById("editDocId").value;
+        const name = document.getElementById("editName").value;
+        const username = document.getElementById("editUsername").value.toLowerCase().trim();
+        const email = document.getElementById("editEmail").value.trim();
+        const role = document.getElementById("editRole").value;
+
+        try {
+            await updateDoc(doc(db, "users", docId), { name, username, email, role });
+            alert("Member සාර්ථකව Edit කරන ලදී!");
+            closeEditModal();
+            loadMembersList();
+        } catch (error) {
+            alert("Error: " + error.message);
+        }
+    };
+
+    // --- CHANGE PASSWORD ---
+    window.handleChangePassword = async function() {
+        const currentPass = document.getElementById("currentPasswordForPass").value;
+        const newPass = document.getElementById("newPassword").value;
+        const user = auth.currentUser;
+
+        if (!currentPass || !newPass) return alert("Fields පුරවන්න.");
+
+        try {
+            const credential = EmailAuthProvider.credential(user.email, currentPass);
+            await reauthenticateWithCredential(user, credential);
+            await updatePassword(user, newPass);
+            alert("Password සාර්ථකව වෙනස් විය!");
+        } catch (error) {
+            alert("Error: " + error.message);
+        }
+    };
+
+    // --- AUTH STATE LISTENER ---
+    window.handleLogout = () => signOut(auth);
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            showCard('dashboardCard');
+
+            const userDocSnap = await getDoc(doc(db, "users", user.uid));
+            if (userDocSnap.exists()) {
+                const data = userDocSnap.data();
+                document.getElementById("userDisplayName").innerText = data.name || data.username;
+                document.getElementById("userDisplayUsername").innerText = data.username;
+                document.getElementById("userDisplayEmail").innerText = data.email || 'N/A';
+                
+                const roleElem = document.getElementById("userDisplayRole");
+                roleElem.innerText = data.role || 'Employee';
+                roleElem.className = `badge ${data.role === 'Supervisor' ? 'badge-supervisor' : 'badge-employee'}`;
+
+                document.getElementById("myProfileName").value = data.name || '';
+                document.getElementById("myProfileEmail").value = data.email || '';
+
+                if (data.role === "Supervisor" || data.role === "Admin") {
+                    document.getElementById("supervisorCard").style.display = "block";
+                    loadMembersList();
                 }
-                await sendPasswordResetEmail(auth, userData.email);
-                alert(`Password Reset Link එක ${userData.email} ලිපිනයට යවන ලදී.`);
-                toggleForgotPassword(false);
-            } catch (error) {
-                alert("Error: " + error.message);
             }
-        };
-
-        // --- 3. USER SELF PROFILE UPDATE ---
-        window.handleSaveMyProfile = async function() {
-            const name = document.getElementById("myProfileName").value;
-            const email = document.getElementById("myProfileEmail").value;
-            const user = auth.currentUser;
-
-            if (!name || !email) return alert("Name සහ Email දෙකම ඇතුළත් කරන්න.");
-
-            try {
-                await updateDoc(doc(db, "users", user.uid), {
-                    name: name.trim(),
-                    email: email.trim()
-                });
-                alert("ඔබගේ Profile එක සාර්ථකව Update විය!");
-                location.reload();
-            } catch (error) {
-                alert("Error: " + error.message);
-            }
-        };
-
-        // --- 4. SUPERVISOR: LOAD MEMBERS TABLE ---
-        window.loadMembersList = async function() {
-            const tbody = document.getElementById("membersTableBody");
-            tbody.innerHTML = "<tr><td colspan='5'>Loading members...</td></tr>";
-
-            try {
-                const querySnapshot = await getDocs(collection(db, "users"));
-                let html = "";
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    html += `
-                        <tr>
-                            <td><strong>${data.username || ''}</strong></td>
-                            <td>${data.name || ''}</td>
-                            <td>${data.email || ''}</td>
-                            <td>${data.role || 'Employee'}</td>
-                            <td>
-                                <button class="btn-edit" onclick="openEditModal('${docSnap.id}', '${data.name || ''}', '${data.username || ''}', '${data.email || ''}', '${data.role || 'Employee'}')">Edit</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                tbody.innerHTML = html || "<tr><td colspan='5'>No members found.</td></tr>";
-            } catch (error) {
-                tbody.innerHTML = `<tr><td colspan='5'>Error loading members: ${error.message}</td></tr>`;
-            }
-        };
-
-        // --- 5. SUPERVISOR: EDIT MEMBER MODAL LOGIC ---
-        window.openEditModal = function(docId, name, username, email, role) {
-            document.getElementById("editDocId").value = docId;
-            document.getElementById("editName").value = name;
-            document.getElementById("editUsername").value = username;
-            document.getElementById("editEmail").value = email;
-            document.getElementById("editRole").value = role;
-            document.getElementById("editModal").style.display = "block";
-        };
-
-        window.closeEditModal = function() {
-            document.getElementById("editModal").style.display = "none";
-        };
-
-        window.handleSaveMemberEdit = async function() {
-            const docId = document.getElementById("editDocId").value;
-            const name = document.getElementById("editName").value;
-            const username = document.getElementById("editUsername").value.toLowerCase().trim();
-            const email = document.getElementById("editEmail").value.trim();
-            const role = document.getElementById("editRole").value;
-
-            if (!name || !username || !email) return alert("සියලුම විස්තර ඇතුළත් කරන්න.");
-
-            try {
-                await updateDoc(doc(db, "users", docId), {
-                    name: name,
-                    username: username,
-                    email: email,
-                    role: role
-                });
-                alert("Member ගේ විස්තර සාර්ථකව Edit කරන ලදී!");
-                closeEditModal();
-                loadMembersList();
-            } catch (error) {
-                alert("Edit Error: " + error.message);
-            }
-        };
-
-        // --- 6. ADD NEW MEMBER ---
-        window.handleAddNewMember = async function() {
-            const name = document.getElementById("newMemberName").value;
-            const username = document.getElementById("newMemberUsername").value.toLowerCase().trim();
-            const email = document.getElementById("newMemberEmail").value.trim();
-            const password = document.getElementById("newMemberPassword").value;
-            const role = document.getElementById("newMemberRole").value;
-
-            if (!name || !username || !email || !password) return alert("සියලුම Fields පුරවන්න.");
-
-            try {
-                const q = query(collection(db, "users"), where("username", "==", username));
-                const snap = await getDocs(q);
-                if (!snap.empty) return alert("මෙම Username එක දැනටමත් භාවිතයේ ඇත.");
-
-                const newDocRef = doc(collection(db, "users"));
-                await setDoc(newDocRef, {
-                    uid: newDocRef.id,
-                    name: name,
-                    username: username,
-                    email: email,
-                    role: role,
-                    createdAt: new Date()
-                });
-
-                alert("නව Member ගේ දත්ත සාර්ථකව Save විය!");
-                loadMembersList();
-            } catch (error) {
-                alert("Error: " + error.message);
-            }
-        };
-
-        // --- 7. CHANGE PASSWORD ---
-        window.handleChangePassword = async function() {
-            const currentPass = document.getElementById("currentPasswordForPass").value;
-            const newPass = document.getElementById("newPassword").value;
-            const user = auth.currentUser;
-
-            if (!currentPass || !newPass) return alert("සියලුම Fields පුරවන්න.");
-
-            try {
-                const credential = EmailAuthProvider.credential(user.email, currentPass);
-                await reauthenticateWithCredential(user, credential);
-                await updatePassword(user, newPass);
-                alert("Password එක සාර්ථකව වෙනස් විය!");
-            } catch (error) {
-                alert("Error: " + error.message);
-            }
-        };
-
-        // --- LOGOUT & UI TOGGLES ---
-        window.handleLogout = () => signOut(auth);
-        window.toggleForgotPassword = function(show) {
-            document.getElementById("loginCard").style.display = show ? "none" : "block";
-            document.getElementById("forgotCard").style.display = show ? "block" : "none";
-        };
-
-        // --- AUTH STATE LISTENER ---
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                document.getElementById("loginCard").style.display = "none";
-                document.getElementById("forgotCard").style.display = "none";
-                document.getElementById("dashboardCard").style.display = "block";
-
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists()) {
-                    const data = userDoc.data();
-                    document.getElementById("userDisplayName").innerText = data.name || data.username;
-                    document.getElementById("userDisplayUsername").innerText = data.username;
-                    document.getElementById("userDisplayEmail").innerText = data.email || 'Not assigned';
-
-                    // Self profile edit input values
-                    document.getElementById("myProfileName").value = data.name || '';
-                    document.getElementById("myProfileEmail").value = data.email || '';
-
-                    // Supervisor Access Control
-                    if (data.role === "Supervisor" || data.role === "Admin") {
-                        document.getElementById("supervisorCard").style.display = "block";
-                        loadMembersList();
-                    }
-                }
-            } else {
-                document.getElementById("loginCard").style.display = "block";
-                document.getElementById("dashboardCard").style.display = "none";
-                document.getElementById("supervisorCard").style.display = "none";
-            }
-        });
-    </script>
+        } else {
+            showCard('loginCard');
+            document.getElementById("dashboardCard").style.display = "none";
+            document.getElementById("supervisorCard").style.display = "none";
+        }
+    });
+</script>
 </body>
 </html>
