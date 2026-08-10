@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KTG LEAVE PORTAL</title>
+<style>
+:root{--primary:#1E3A8A;--primary-hover:#1D4ED8;--bg:#F1F5F9;--card:#fff;--text:#0F172A;--muted:#64748B;--success:#10B981;--warning:#F59E0B;--danger:#EF4444;--border:#E2E8F0}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,Tahoma,sans-serif}
+body{background:var(--bg);color:var(--text);padding:20px}.container{max-width:1200px;margin:auto}
+.hidden{display:none!important}.auth-container{max-width:430px;margin:35px auto;background:#fff;border-radius:12px;box-shadow:0 4px 14px #0002;overflow:hidden}
+.auth-header-img{width:100%;height:140px;object-fit:cover}.auth-content{padding:24px 30px 30px}.auth-content h2{text-align:center;color:var(--primary);margin-bottom:16px}
+.auth-toggle{display:flex;border-bottom:2px solid var(--border);margin-bottom:20px}.auth-toggle button{flex:1;padding:10px;border:0;background:none;color:var(--muted);font-weight:600;cursor:pointer}.auth-toggle .active{color:var(--primary);border-bottom:2px solid var(--primary)}
+header{display:flex;justify-content:space-between;align-items:center;gap:15px;background:#fff;padding:16px 20px;border-radius:8px;box-shadow:0 1px 3px #0001;margin-bottom:20px}
+.header-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.role-badge,.notif-badge{padding:6px 12px;border-radius:20px;font-weight:700;font-size:.8rem}.employee{background:#DBEAFE;color:var(--primary)}.supervisor{background:#FEF3C7;color:#D97706}
+button{cursor:pointer}.btn-primary{background:var(--primary);color:white;border:0;border-radius:6px;padding:10px 16px;font-weight:600}.btn-primary:hover{background:var(--primary-hover)}
+.btn-secondary{background:#E2E8F0;color:var(--text);border:0;border-radius:6px;padding:10px 16px;font-weight:600}
+.btn-danger{background:var(--danger);color:white;border:0;border-radius:6px;padding:7px 12px}.btn-warning{background:var(--warning);color:white;border:0;border-radius:6px;padding:7px 12px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px}.stat-card,.card{background:#fff;border-radius:8px;box-shadow:0 1px 3px #0001}.stat-card{padding:20px;border-top:4px solid var(--primary)}.stat-card.casual{border-color:#8B5CF6}.stat-card h3{font-size:.85rem;color:var(--muted);text-transform:uppercase}.count{font-size:1.8rem;font-weight:bold;margin-top:8px}
+.main-grid{display:grid;grid-template-columns:1fr 2fr;gap:24px}.card{padding:24px;margin-bottom:24px}.card h2{font-size:1.2rem;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:8px}
+.form-group{margin-bottom:15px}label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px}input,select,textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;font-size:.9rem}
+.form-inline-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.84rem;text-align:left}th,td{padding:10px;border-bottom:1px solid var(--border);vertical-align:middle}th{background:#F8FAFC;color:var(--muted)}
+.badge{padding:3px 7px;border-radius:12px;font-size:.72rem;font-weight:600;display:inline-block}.badge-pending{background:#FEF3C7;color:#D97706}.badge-approved{background:#D1FAE5;color:#059669}.badge-rejected{background:#FEE2E2;color:#DC2626}
+.action-btn{padding:5px 8px;font-size:.74rem;border:0;border-radius:4px;color:#fff;margin:2px}.approve{background:var(--success)}.reject{background:var(--danger)}.remove{background:#6B7280}
+.notification-box{position:relative}.notification-list{position:absolute;right:0;top:40px;width:360px;max-height:420px;overflow:auto;background:white;border:1px solid var(--border);border-radius:8px;box-shadow:0 5px 20px #0002;z-index:50;padding:10px}.notification-item{padding:10px;border-bottom:1px solid var(--border);font-size:.85rem}.notification-item.unread{background:#EFF6FF}.small{font-size:.78rem;color:var(--muted)}
+.pending-box{background:#FEF3C7;border:2px solid #F59E0B;border-radius:8px;padding:16px;margin-bottom:20px}
+.reset-link{display:block;text-align:center;margin-top:12px;color:var(--primary);font-size:.85rem;cursor:pointer;text-decoration:underline}
+.modal{position:fixed;inset:0;background:#0006;display:flex;align-items:center;justify-content:center;z-index:100;padding:15px;overflow:auto}.modal-box{background:#fff;border-radius:10px;padding:24px;max-width:430px;width:100%;max-height:90vh;overflow:auto}
+.divider{border-top:1px solid var(--border);margin:18px 0}
+.autocomplete-box{position:relative}.autocomplete-list{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:6px;box-shadow:0 4px 14px #0002;max-height:220px;overflow:auto;z-index:40}
+.autocomplete-item{padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--border)}.autocomplete-item:last-child{border-bottom:0}.autocomplete-item:hover{background:#F1F5F9}.autocomplete-item strong{display:block;font-size:.88rem}.autocomplete-item .small{display:block;margin-top:2px}
+@media(max-width:768px){.main-grid{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}.notification-list{position:fixed;left:10px;right:10px;width:auto}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div id="auth-screen" class="auth-container">
+<img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=600&q=80" class="auth-header-img">
+<div class="auth-content">
+<h2>KTG LEAVE PORTAL</h2>
+<div class="auth-toggle">
+<button id="tab-login" class="active" onclick="toggleAuthTab('login')">Log In</button>
+<button id="tab-signup" onclick="toggleAuthTab('signup')">Sign Up</button>
+</div>
+
+<form id="login-form">
+<div class="form-group"><label>Username</label><input id="login-username" required></div>
+<div class="form-group"><label>Password</label><input id="login-password" type="password" required></div>
+<button class="btn-primary" style="width:100%">Log In</button>
+<span class="reset-link" onclick="openResetModal()">Forgot Password / Reset Password</span>
+</form>
+
+<form id="signup-form" class="hidden">
+<div class="form-group"><label>Full Name</label><input id="signup-fullname" required></div>
+<div class="form-group"><label>Designation</label><input id="signup-designation" placeholder="e.g. Management Service Officer" required></div>
+<div class="form-group"><label>Username</label><input id="signup-username" required></div>
+<div class="form-group"><label>Email Address (for password recovery)</label><input id="signup-email" type="email" required></div>
+<div class="form-group"><label>Password</label><input id="signup-password" type="password" minlength="6" required>
+<div class="small" style="margin-top:4px">At least 6 characters, with both letters and numbers. Cannot be the same as your username.</div></div>
+<div class="form-group"><label>Role</label><select id="signup-role"><option value="Employee">Employee</option><option value="Supervisor">Supervisor</option></select></div>
+<button class="btn-primary" style="width:100%">Request Account Registration</button>
+</form>
+</div>
+</div>
+
+<div id="app-screen" class="hidden">
+<header>
+<div><h1>KTG LEAVE PORTAL</h1><div class="small">Leave Management System</div></div>
+<div class="header-actions">
+<div class="notification-box">
+<button id="notification-btn" class="btn-warning" onclick="toggleNotifications()">🔔 <span id="notification-count">0</span></button>
+<div id="notification-list" class="notification-list hidden"></div>
+</div>
+<button class="btn-warning" onclick="requestBrowserNotifications()">Enable Browser Notifications</button>
+<button class="btn-secondary" onclick="openAccountModal()">🔑 Account Settings</button>
+<span>Hello, <strong id="user-display-name"></strong></span>
+<span id="role-display" class="role-badge employee">Employee</span>
+<button class="btn-danger" onclick="logout()">Logout</button>
+</div>
+</header>
+
+<div class="stats-grid">
+<div class="stat-card"><h3>Medical Leave Balance</h3><div class="count" id="medical-remaining">24 Days</div><div class="small" id="medical-sub">Used: 0 / Total: 24</div></div>
+<div class="stat-card casual"><h3>Casual Leave Balance</h3><div class="count" id="casual-remaining">21 Days</div><div class="small" id="casual-sub">Used: 0 / Total: 21</div></div>
+</div>
+
+<div class="main-grid">
+<div class="card">
+<h2>Apply Leave</h2>
+<form id="leave-form">
+<div class="form-group"><label>Leave Type</label><select id="leave-type"><option>Medical Leave</option><option>Casual Leave</option></select></div>
+<div class="form-group"><label>Start Date</label><input type="date" id="start-date" required></div>
+<div class="form-group"><label>End Date</label><input type="date" id="end-date" required></div>
+<div class="form-group"><label>Number of Leave Days</label><input type="number" id="manual-days" min=".5" step=".5" required></div>
+<div class="form-group"><label>Covering Officer (1st Approver)</label>
+<div class="autocomplete-box">
+<input id="covering-officer-search" type="text" placeholder="Type a name to search..." autocomplete="off">
+<input type="hidden" id="covering-officer">
+<div id="covering-officer-list" class="autocomplete-list hidden"></div>
+</div></div>
+<div class="form-group"><label>Reason</label><textarea id="reason" rows="3" required></textarea></div>
+<button class="btn-primary" style="width:100%">Submit Application</button>
+</form>
+</div>
+
+<div class="card">
+<h2>Leave Application Status</h2>
+<div class="table-wrap"><table><thead><tr><th>Applicant</th><th>Type & Dates</th><th>Days</th><th>Covering Officer</th><th>Supervisor</th><th>Action</th></tr></thead><tbody id="leave-table-body"></tbody></table></div>
+</div>
+</div>
+
+<div id="supervisor-panel" class="card hidden">
+<h2>Supervisor Panel</h2>
+<div class="pending-box">
+<h3>⚠️ Pending Sign-Up Approvals</h3>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Username</th><th>Designation</th><th>Role</th><th>Action</th></tr></thead><tbody id="pending-users-table-body"></tbody></table></div>
+</div>
+
+<div style="background:#F8FAFC;padding:16px;border:1px solid var(--border);border-radius:8px;margin-bottom:20px">
+<h3 style="color:var(--primary);margin-bottom:12px">Directly Add Member</h3>
+<form id="add-user-form">
+<div class="form-inline-grid">
+<div><label>Full Name</label><input id="add-fullname" required></div>
+<div><label>Designation</label><input id="add-designation" required></div>
+<div><label>Username</label><input id="add-username" required></div>
+<div><label>Email Address</label><input id="add-email" type="email" required></div>
+<div><label>Password</label><input id="add-password" type="password" minlength="6" required></div>
+<div><label>Role</label><select id="add-role"><option>Employee</option><option>Supervisor</option></select></div>
+</div>
+<div class="small" style="margin:6px 0 10px">Password: at least 6 characters, letters + numbers, and not the same as the username.</div>
+<button class="btn-primary">+ Add Approved Member</button>
+</form>
+</div>
+
+<h3 style="color:var(--primary);margin-bottom:12px">Active Team</h3>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Username</th><th>Designation</th><th>Role</th><th>Medical</th><th>Casual</th><th>Action</th></tr></thead><tbody id="members-table-body"></tbody></table></div>
+
+<div style="background:#F8FAFC;padding:16px;border:1px solid var(--border);border-radius:8px;margin-top:24px">
+<h3 style="color:var(--primary);margin-bottom:12px">Individual Member Leave History</h3>
+<div class="form-group" style="max-width:350px"><label>Select Member</label><select id="member-inspect-select" onchange="renderIndividualHistory()"></select></div>
+<div class="table-wrap"><table><thead><tr><th>Type</th><th>Dates</th><th>Days</th><th>Reason</th><th>Covering</th><th>Supervisor</th><th>Action</th></tr></thead><tbody id="individual-history-body"></tbody></table></div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="reset-modal" class="modal hidden">
+<div class="modal-box">
+<h2 style="color:var(--primary);margin-bottom:16px">Forgot Password</h2>
+<p class="small" style="margin-bottom:15px">Enter your username. If your account has a registered email, we'll send a secure password reset link to that address. Nobody can reset your password just by knowing your username — you must click the link sent to your own inbox.</p>
+<form id="reset-form">
+<div class="form-group"><label>Username</label><input id="reset-username" required></div>
+<button class="btn-primary" style="width:100%">Send Password Reset Email</button>
+<button type="button" class="btn-danger" style="width:100%;margin-top:8px" onclick="closeResetModal()">Cancel</button>
+</form>
+</div>
+</div>
+
+<div id="account-modal" class="modal hidden">
+<div class="modal-box">
+<h2 style="color:var(--primary);margin-bottom:16px">Account Settings</h2>
+
+<h3 style="margin-bottom:10px">Update Recovery Email</h3>
+<form id="updateemail-form">
+<div class="form-group"><label>New Email Address</label><input id="updateemail-new" type="email" required></div>
+<div class="form-group"><label>Current Password</label><input id="updateemail-password" type="password" required></div>
+<button class="btn-primary" style="width:100%">Update Email</button>
+</form>
+
+<div class="divider"></div>
+
+<h3 style="margin-bottom:10px">Change Password</h3>
+<form id="changepw-form">
+<div class="form-group"><label>Current Password</label><input id="changepw-current" type="password" required></div>
+<div class="form-group"><label>New Password</label><input id="changepw-new" type="password" minlength="6" required>
+<div class="small" style="margin-top:4px">At least 6 characters, with both letters and numbers. Cannot be your username.</div></div>
+<div class="form-group"><label>Confirm New Password</label><input id="changepw-confirm" type="password" minlength="6" required></div>
+<button class="btn-primary" style="width:100%">Change Password</button>
+</form>
+
+<button type="button" class="btn-danger" style="width:100%;margin-top:14px" onclick="closeAccountModal()">Close</button>
+</div>
+</div>
+
+<div id="reset-member-modal" class="modal hidden">
+<div class="modal-box">
+<h2 style="color:var(--primary);margin-bottom:16px">Reset Member's Password</h2>
+<p class="small" style="margin-bottom:15px">Resetting password for: <strong id="reset-member-name"></strong>. They will be notified in-app once it's done.</p>
+<form id="reset-member-form">
+<div class="form-group"><label>New Password</label><input id="reset-member-password" type="password" minlength="6" required>
+<div class="small" style="margin-top:4px">At least 6 characters, with both letters and numbers. Cannot be their username.</div></div>
+<div class="form-group"><label>Confirm New Password</label><input id="reset-member-confirm" type="password" minlength="6" required></div>
+<button class="btn-primary" style="width:100%">Reset Password</button>
+<button type="button" class="btn-danger" style="width:100%;margin-top:8px" onclick="closeResetMemberModal()">Cancel</button>
+</form>
+</div>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import {getFirestore,collection,addDoc,setDoc,doc,updateDoc,deleteDoc,onSnapshot,getDocs,query,where} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,sendPasswordResetEmail,updatePassword,updateEmail,reauthenticateWithCredential,EmailAuthProvider} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import {getFunctions,httpsCallable} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-functions.js";
+
+const firebaseConfig={
+ apiKey:"AIzaSyCBvWYIEYA0uBT487wFX-Z8VdazJSWgPJI",
+ authDomain:"ktg-leave-management-system.firebaseapp.com",
+ projectId:"ktg-leave-management-system",
+ storageBucket:"ktg-leave-management-system.firebasestorage.app",
+ messagingSenderId:"584568436311",
+ appId:"1:584568436311:web:fe1ed9b3e6cf95bb709512",
+ measurementId:"G-DKDN4803YD"
+};
+const app=initializeApp(firebaseConfig),db=getFirestore(app),auth=getAuth(app),functions=getFunctions(app);
+// Secondary Firebase app instance used ONLY for creating new Auth accounts (signup / add member).
+// This prevents the client SDK from silently swapping the logged-in supervisor's session
+// for the newly-created user's session, which was happening with the single-auth-instance approach.
+const secondaryApp=initializeApp(firebaseConfig,"SecondaryAdmin"),secondaryAuth=getAuth(secondaryApp);
+
+const LIMITS={"Medical Leave":24,"Casual Leave":21},MAX_SUPERVISORS=5;
+const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+let users=[],leaveRequests=[],notifications=[],currentUser=JSON.parse(sessionStorage.getItem("ktg_current_user"))||null;
+let unsubUsers=null,unsubLeaves=null,unsubNotifications=null;
+
+const norm=s=>(s||"").toString().trim().toLowerCase();
+const badge=s=>`<span class="badge badge-${String(s).toLowerCase()}">${s}</span>`;
+function legacyAuthEmail(username){return `${norm(username)}@ktgleave.local`}
+
+// Password policy: min 6 chars, at least one letter AND one number, and must not equal the username.
+function validatePassword(password,username){
+ if(!password||password.length<6)return "Password must be at least 6 characters.";
+ if(!/[A-Za-z]/.test(password)||!/[0-9]/.test(password))return "Password must contain both letters and numbers.";
+ if(norm(password)===norm(username))return "Password cannot be the same as the username.";
+ return null;
+}
+
+async function initDefaults(){
+ const q=query(collection(db,"users"),where("username","==","imashi")),s=await getDocs(q);
+ if(s.empty){
+  try{
+   const bootstrapEmail=legacyAuthEmail("imashi"),bootstrapPassword="Imashi#2024";
+   const c=await createUserWithEmailAndPassword(secondaryAuth,bootstrapEmail,bootstrapPassword);
+   await setDoc(doc(db,"users",c.user.uid),{uid:c.user.uid,name:"Imashi",designation:"Supervisor",username:"imashi",role:"Supervisor",status:"Approved"});
+   await signOut(secondaryAuth);
+   console.info("Default supervisor account created (username: imashi, password: Imashi#2024). Please log in and set a real recovery email + new password via Account Settings immediately.");
+  }catch(err){console.warn("Default supervisor bootstrap skipped:",err.message)}
+ }
+}
+function saveSession(){sessionStorage.setItem("ktg_current_user",JSON.stringify(currentUser))}
+function showAuth(){document.getElementById("auth-screen").classList.remove("hidden");document.getElementById("app-screen").classList.add("hidden")}
+function showApp(){
+ document.getElementById("auth-screen").classList.add("hidden");document.getElementById("app-screen").classList.remove("hidden");
+ document.getElementById("user-display-name").textContent=currentUser.name;
+ const rb=document.getElementById("role-display");rb.textContent=currentUser.role;rb.className="role-badge "+(currentUser.role==="Supervisor"?"supervisor":"employee");
+ document.getElementById("supervisor-panel").classList.toggle("hidden",currentUser.role!=="Supervisor");
+ startListeners();refreshUI();
+ if(!currentUser.email){
+  setTimeout(()=>alert("For account security, please set a real recovery email address in Account Settings. This lets you reset your password yourself in future if you forget it."),600);
+ }
+}
+function startListeners(){
+ if(unsubUsers)unsubUsers();if(unsubLeaves)unsubLeaves();if(unsubNotifications)unsubNotifications();
+ unsubUsers=onSnapshot(collection(db,"users"),s=>{users=s.docs.map(d=>({id:d.id,...d.data()}));const me=users.find(u=>u.id===currentUser?.id);if(me){currentUser=me;saveSession()}refreshUI()});
+ unsubLeaves=onSnapshot(collection(db,"leave_requests"),s=>{leaveRequests=s.docs.map(d=>({id:d.id,...d.data()}));refreshUI()});
+ const q=query(collection(db,"notifications"),where("userId","==",currentUser.id));
+ unsubNotifications=onSnapshot(q,s=>{notifications=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));renderNotifications()});
+}
+let coveringOptionsCache=[];
+function populateCovering(){
+ coveringOptionsCache=users.filter(u=>u.status==="Approved"&&u.id!==currentUser.id);
+ const hidden=document.getElementById("covering-officer"),search=document.getElementById("covering-officer-search");
+ if(!hidden||!search)return;
+ // If the previously-picked officer is no longer valid (removed/unapproved), clear the selection.
+ if(hidden.value&&!coveringOptionsCache.some(u=>u.id===hidden.value)){hidden.value="";search.value=""}
+}
+function renderCoveringSuggestions(filterText){
+ const list=document.getElementById("covering-officer-list");if(!list)return;
+ const term=norm(filterText);
+ const matches=term?coveringOptionsCache.filter(u=>norm(u.name).includes(term)||norm(u.designation||"").includes(term)):coveringOptionsCache;
+ list.innerHTML=matches.length
+  ?matches.map(u=>`<div class="autocomplete-item" onclick="selectCoveringOfficer('${u.id}')"><strong>${u.name}</strong><span class="small">${u.designation||"Not specified"} (${u.role})</span></div>`).join("")
+  :'<div class="autocomplete-item small">No matching officers found.</div>';
+ list.classList.remove("hidden");
+}
+window.selectCoveringOfficer=id=>{
+ const u=coveringOptionsCache.find(x=>x.id===id);if(!u)return;
+ document.getElementById("covering-officer").value=u.id;
+ document.getElementById("covering-officer-search").value=`${u.name} — ${u.designation||"Not specified"} (${u.role})`;
+ document.getElementById("covering-officer-list").classList.add("hidden");
+};
+document.getElementById("covering-officer-search").addEventListener("input",e=>{
+ document.getElementById("covering-officer").value=""; // any manual edit invalidates the previous pick
+ renderCoveringSuggestions(e.target.value);
+});
+document.getElementById("covering-officer-search").addEventListener("focus",e=>{renderCoveringSuggestions(e.target.value)});
+document.addEventListener("click",e=>{
+ const box=document.getElementById("covering-officer-search")?.closest(".autocomplete-box");
+ if(box&&!box.contains(e.target))document.getElementById("covering-officer-list").classList.add("hidden");
+});
+function populateMembers(){
+ const el=document.getElementById("member-inspect-select");if(!el)return;const old=el.value;
+ el.innerHTML='<option value="">-- Select Member --</option>';
+ users.filter(u=>u.status==="Approved").forEach(u=>{const o=document.createElement("option");o.value=u.name;o.textContent=`${u.name} — ${u.designation||"Not specified"}`;el.appendChild(o)});el.value=old;
+}
+function used(type,name){return leaveRequests.filter(r=>norm(r.applicant)===norm(name)&&r.type===type&&r.supervisorStatus==="Approved").reduce((x,r)=>x+Number(r.days||0),0)}
+function supervisorsCount(){return users.filter(u=>u.status==="Approved"&&u.role==="Supervisor").length}
+async function notify(userId,title,message,leaveId=null){
+ if(!userId||userId===currentUser?.id)return;
+ await addDoc(collection(db,"notifications"),{userId,title,message,leaveId,read:false,createdAt:new Date()});
+}
+async function notifyMany(userIds,title,message,leaveId=null){for(const id of userIds.filter(Boolean))await notify(id,title,message,leaveId)}
+function renderNotifications(){
+ const unread=notifications.filter(n=>!n.read).length;document.getElementById("notification-count").textContent=unread;
+ const box=document.getElementById("notification-list");box.innerHTML="";
+ if(!notifications.length){box.innerHTML='<div class="notification-item">No notifications.</div>';return}
+ notifications.slice(0,30).forEach(n=>{const d=document.createElement("div");d.className="notification-item "+(!n.read?"unread":"");d.innerHTML=`<strong>${n.title||"Notification"}</strong><br>${n.message}<br><span class="small">${n.createdAt?.toDate?n.createdAt.toDate().toLocaleString():""}</span>`;box.appendChild(d)})
+}
+window.toggleNotifications=async()=>{document.getElementById("notification-list").classList.toggle("hidden");for(const n of notifications.filter(x=>!x.read))await updateDoc(doc(db,"notifications",n.id),{read:true})}
+window.requestBrowserNotifications=async()=>{if(!("Notification"in window))return alert("This browser does not support notifications.");const p=await Notification.requestPermission();alert(p==="granted"?"Browser notifications enabled.":"Notification permission was not granted.")}
+async function browserNotice(title,msg){if("Notification"in window&&Notification.permission==="granted")new Notification(title,{body:msg})}
+
+window.toggleAuthTab=tab=>{
+ document.getElementById("tab-login").classList.toggle("active",tab==="login");document.getElementById("tab-signup").classList.toggle("active",tab==="signup");
+ document.getElementById("login-form").classList.toggle("hidden",tab!=="login");document.getElementById("signup-form").classList.toggle("hidden",tab!=="signup");
+};
+
+window.openResetModal=()=>document.getElementById("reset-modal").classList.remove("hidden");
+window.closeResetModal=()=>document.getElementById("reset-modal").classList.add("hidden");
+window.openAccountModal=()=>document.getElementById("account-modal").classList.remove("hidden");
+window.closeAccountModal=()=>document.getElementById("account-modal").classList.add("hidden");
+
+let resetMemberTarget=null;
+window.openResetMemberModal=(uid,name,username)=>{
+ resetMemberTarget={uid,username};
+ document.getElementById("reset-member-name").textContent=name;
+ document.getElementById("reset-member-modal").classList.remove("hidden");
+};
+window.closeResetMemberModal=()=>{document.getElementById("reset-member-modal").classList.add("hidden");resetMemberTarget=null;document.getElementById("reset-member-form").reset()};
+
+// Supervisor-triggered password reset. Requires the "adminResetPassword" Cloud
+// Function (Firebase Admin SDK) to be deployed — see functions/index.js.
+document.getElementById("reset-member-form").onsubmit=async e=>{
+ e.preventDefault();
+ if(!resetMemberTarget)return alert("No member selected.");
+ const pw=document.getElementById("reset-member-password").value,confirmPw=document.getElementById("reset-member-confirm").value;
+ if(pw!==confirmPw)return alert("Passwords do not match.");
+ const perr=validatePassword(pw,resetMemberTarget.username);if(perr)return alert(perr);
+ try{
+  const fn=httpsCallable(functions,"adminResetPassword");
+  await fn({targetUid:resetMemberTarget.uid,newPassword:pw});
+  alert("Password reset successfully. The member has been notified in-app.");
+  closeResetMemberModal();
+ }catch(err){alert("Could not reset password: "+(err.message||"Unknown error. Make sure the adminResetPassword Cloud Function is deployed."))}
+};
+
+// FORGOT PASSWORD: only sends a reset link to the email on file. Nobody can change a
+// password just by knowing a username — Firebase requires the person to click the
+// link delivered to that real inbox before any password is changed.
+document.getElementById("reset-form").onsubmit=async e=>{
+ e.preventDefault();
+ const username=norm(document.getElementById("reset-username").value);
+ try{
+  const q=query(collection(db,"users"),where("username","==",username)),s=await getDocs(q);
+  if(s.empty)return alert("Username not found.");
+  const u={id:s.docs[0].id,...s.docs[0].data()};
+  if(!u.email)return alert("This account has no registered recovery email on file. Please ask a supervisor to help, or contact them to add one via Account Settings once you can log in.");
+  await sendPasswordResetEmail(auth,u.email);
+  alert("If that account has a working recovery email, a password reset link has just been sent to it. Check the inbox (and spam folder) and follow the link to set a new password.");
+  closeResetModal();e.target.reset();
+ }catch(err){alert("Password reset could not be completed: "+err.message)}
+};
+
+document.getElementById("login-form").onsubmit=async e=>{
+ e.preventDefault();const username=norm(document.getElementById("login-username").value),password=document.getElementById("login-password").value;
+ try{
+  const q=query(collection(db,"users"),where("username","==",username)),s=await getDocs(q);
+  if(s.empty)return alert("Invalid username or password.");
+  const u={id:s.docs[0].id,...s.docs[0].data()};
+  const loginEmail=u.email||legacyAuthEmail(username);
+  const c=await signInWithEmailAndPassword(auth,loginEmail,password);
+  if(c.user.uid!==u.uid){await signOut(auth);return alert("Account data mismatch. Please contact your supervisor.")}
+  if(u.status!=="Approved"){await signOut(auth);return alert("Your account is pending/not approved.")}
+  currentUser=u;saveSession();showApp();
+ }catch(err){alert("Invalid username or password.")}
+};
+
+document.getElementById("signup-form").onsubmit=async e=>{
+ e.preventDefault();
+ const name=document.getElementById("signup-fullname").value.trim(),designation=document.getElementById("signup-designation").value.trim(),username=norm(document.getElementById("signup-username").value),email=document.getElementById("signup-email").value.trim(),password=document.getElementById("signup-password").value,role=document.getElementById("signup-role").value;
+ if(!EMAIL_RE.test(email))return alert("Please enter a valid email address.");
+ const perr=validatePassword(password,username);if(perr)return alert(perr);
+ if(role==="Supervisor"&&supervisorsCount()>=MAX_SUPERVISORS)return alert("Maximum 5 supervisors are allowed.");
+ try{
+  const uq=query(collection(db,"users"),where("username","==",username));if(!(await getDocs(uq)).empty)return alert("Username already taken.");
+  const eq=query(collection(db,"users"),where("email","==",email));if(!(await getDocs(eq)).empty)return alert("An account with this email already exists.");
+  const c=await createUserWithEmailAndPassword(secondaryAuth,email,password);
+  await setDoc(doc(db,"users",c.user.uid),{uid:c.user.uid,name,designation,username,email,role,status:"Pending"});
+  await signOut(secondaryAuth);
+  document.getElementById("signup-form").reset();alert("Registration submitted. Please wait for supervisor approval.");toggleAuthTab("login");
+ }catch(err){alert("Registration failed: "+err.message)}
+};
+
+document.getElementById("leave-form").onsubmit=async e=>{
+ e.preventDefault();const type=document.getElementById("leave-type").value,startDate=document.getElementById("start-date").value,endDate=document.getElementById("end-date").value,days=parseFloat(document.getElementById("manual-days").value),coveringId=document.getElementById("covering-officer").value,reason=document.getElementById("reason").value.trim();
+ if(new Date(endDate)<new Date(startDate))return alert("Invalid dates.");
+ if(used(type,currentUser.name)+days>LIMITS[type])return alert("This application exceeds the available leave balance.");
+ const covering=users.find(u=>u.id===coveringId);if(!covering)return alert("Please select a covering officer.");
+ try{
+  const ref=await addDoc(collection(db,"leave_requests"),{applicant:currentUser.name,applicantId:currentUser.id,type,startDate,endDate,days,coveringOfficer:covering.name,coveringOfficerId:covering.id,coveringStatus:"Pending",supervisorStatus:"Pending",reason,createdAt:new Date()});
+  const supervisors=users.filter(u=>u.status==="Approved"&&u.role==="Supervisor").map(u=>u.id);
+  await notify(covering.id,"New Leave Application",`${currentUser.name} (${currentUser.designation||"Employee"}) submitted ${days} day(s) of ${type}.`,ref.id);
+  await notifyMany(supervisors,"New Leave Application",`${currentUser.name} submitted a leave application. Covering officer: ${covering.name}.`,ref.id);
+  await browserNotice("Leave application submitted","Notifications sent to the covering officer and supervisor.");
+  e.target.reset();alert("Leave application submitted successfully.");
+ }catch(err){console.error(err);alert("Could not submit leave application.")}
+};
+
+window.setCoveringApproval=async(id,status)=>{
+ const r=leaveRequests.find(x=>x.id===id);if(!r)return;
+ if(r.coveringOfficerId!==currentUser.id)return alert("Only the selected covering officer can take this action.");
+ await updateDoc(doc(db,"leave_requests",id),{coveringStatus:status,supervisorStatus:status==="Rejected"?"Rejected":"Pending"});
+ if(status==="Approved"){
+  const supervisors=users.filter(u=>u.status==="Approved"&&u.role==="Supervisor").map(u=>u.id);
+  await notifyMany(supervisors,"Leave Ready for Supervisor Approval",`${r.applicant}'s leave was approved by covering officer ${currentUser.name}.`,id);
+  await notify(r.applicantId,"Covering Officer Agreed",`${currentUser.name} agreed to cover your ${r.type} leave.`,id);
+ }else await notify(r.applicantId,"Leave Rejected by Covering Officer",`${r.applicant}'s ${r.type} application was rejected by ${currentUser.name}.`,id);
+};
+
+window.setSupervisorApproval=async(id,status)=>{
+ const r=leaveRequests.find(x=>x.id===id);if(!r||currentUser.role!=="Supervisor")return;
+ await updateDoc(doc(db,"leave_requests",id),{supervisorStatus:status});
+ await notify(r.applicantId,`Leave ${status}`,`Your ${r.type} application (${r.startDate} to ${r.endDate}) was ${status.toLowerCase()} by supervisor ${currentUser.name}.`,id);
+ if(r.coveringOfficerId)await notify(r.coveringOfficerId,`Leave ${status}`,`${r.applicant}'s leave application was ${status.toLowerCase()} by supervisor ${currentUser.name}.`,id);
+};
+
+window.deleteLeaveRequest=async id=>{
+ if(currentUser.role!=="Supervisor")return alert("Only supervisors can delete records.");
+ const r=leaveRequests.find(x=>x.id===id);if(!r)return;
+ if(confirm("Delete this leave request?")){
+  await deleteDoc(doc(db,"leave_requests",id));
+  await notify(r.applicantId,"Leave Application Deleted",`Your ${r.type} leave application was deleted by supervisor ${currentUser.name}.`,id);
+  if(r.coveringOfficerId)await notify(r.coveringOfficerId,"Leave Application Deleted",`${r.applicant}'s leave application was deleted by supervisor ${currentUser.name}.`,id);
+ }
+};
+
+window.approvePendingUser=async id=>{
+ const u=users.find(x=>x.id===id);if(!u)return;
+ if(u.role==="Supervisor"&&supervisorsCount()>=MAX_SUPERVISORS)return alert("Maximum 5 supervisors are already approved.");
+ await updateDoc(doc(db,"users",id),{status:"Approved"});await notify(u.id,"Account Approved","Your KTG Leave Portal account has been approved.");
+};
+window.rejectPendingUser=async id=>{if(confirm("Reject this registration?"))await deleteDoc(doc(db,"users",id))};
+window.removeUser=async id=>{if(id===currentUser.id)return alert("You cannot remove your own account.");if(confirm("Remove this user profile?"))await deleteDoc(doc(db,"users",id))};
+
+// Uses secondaryAuth so creating a new member's Auth account never signs the
+// current supervisor out of their own session.
+document.getElementById("add-user-form").onsubmit=async e=>{
+ e.preventDefault();const name=document.getElementById("add-fullname").value.trim(),designation=document.getElementById("add-designation").value.trim(),username=norm(document.getElementById("add-username").value),email=document.getElementById("add-email").value.trim(),password=document.getElementById("add-password").value,role=document.getElementById("add-role").value;
+ if(!EMAIL_RE.test(email))return alert("Please enter a valid email address.");
+ const perr=validatePassword(password,username);if(perr)return alert(perr);
+ if(role==="Supervisor"&&supervisorsCount()>=MAX_SUPERVISORS)return alert("Maximum 5 supervisors are allowed.");
+ try{
+  const uq=query(collection(db,"users"),where("username","==",username));if(!(await getDocs(uq)).empty)return alert("Username already exists.");
+  const eq=query(collection(db,"users"),where("email","==",email));if(!(await getDocs(eq)).empty)return alert("An account with this email already exists.");
+  const c=await createUserWithEmailAndPassword(secondaryAuth,email,password);
+  await setDoc(doc(db,"users",c.user.uid),{uid:c.user.uid,name,designation,username,email,role,status:"Approved"});
+  await signOut(secondaryAuth);e.target.reset();alert("Member added successfully.");
+ }catch(err){alert("Could not add member: "+err.message)}
+};
+
+// ACCOUNT SETTINGS: update recovery email (requires reauth with current password)
+document.getElementById("updateemail-form").onsubmit=async e=>{
+ e.preventDefault();
+ const newEmail=document.getElementById("updateemail-new").value.trim(),currentPw=document.getElementById("updateemail-password").value;
+ if(!EMAIL_RE.test(newEmail))return alert("Please enter a valid email address.");
+ try{
+  const eq=query(collection(db,"users"),where("email","==",newEmail)),es=await getDocs(eq);
+  if(!es.empty&&es.docs[0].id!==currentUser.id)return alert("This email is already used by another account.");
+  const authEmail=currentUser.email||legacyAuthEmail(currentUser.username);
+  const cred=EmailAuthProvider.credential(authEmail,currentPw);
+  await reauthenticateWithCredential(auth.currentUser,cred);
+  await updateEmail(auth.currentUser,newEmail);
+  await updateDoc(doc(db,"users",currentUser.id),{email:newEmail});
+  currentUser.email=newEmail;saveSession();
+  alert("Recovery email updated successfully.");e.target.reset();
+ }catch(err){alert("Could not update email: "+(err.code==="auth/wrong-password"?"Current password is incorrect.":err.message))}
+};
+
+// ACCOUNT SETTINGS: change password (requires reauth with current password — knowing
+// only the username is never enough to change a password).
+document.getElementById("changepw-form").onsubmit=async e=>{
+ e.preventDefault();
+ const current=document.getElementById("changepw-current").value,next=document.getElementById("changepw-new").value,confirmPw=document.getElementById("changepw-confirm").value;
+ if(next!==confirmPw)return alert("New passwords do not match.");
+ const perr=validatePassword(next,currentUser.username);if(perr)return alert(perr);
+ try{
+  const authEmail=currentUser.email||legacyAuthEmail(currentUser.username);
+  const cred=EmailAuthProvider.credential(authEmail,current);
+  await reauthenticateWithCredential(auth.currentUser,cred);
+  await updatePassword(auth.currentUser,next);
+  alert("Password changed successfully.");e.target.reset();closeAccountModal();
+ }catch(err){alert("Could not change password: "+(err.code==="auth/wrong-password"?"Current password is incorrect.":err.message))}
+};
+
+function refreshUI(){
+ if(!currentUser)return;populateCovering();populateMembers();
+ const mu=used("Medical Leave",currentUser.name),cu=used("Casual Leave",currentUser.name);
+ document.getElementById("medical-remaining").textContent=`${LIMITS["Medical Leave"]-mu} Days`;document.getElementById("medical-sub").textContent=`Used: ${mu} / 24`;
+ document.getElementById("casual-remaining").textContent=`${LIMITS["Casual Leave"]-cu} Days`;document.getElementById("casual-sub").textContent=`Used: ${cu} / 21`;
+ const body=document.getElementById("leave-table-body");body.innerHTML="";
+ let rows=leaveRequests.filter(r=>currentUser.role==="Supervisor"||r.applicantId===currentUser.id||r.coveringOfficerId===currentUser.id);
+ if(!rows.length)body.innerHTML='<tr><td colspan="6" style="text-align:center">No leave records found.</td></tr>';
+ rows.forEach(r=>{
+  const isCover=r.coveringOfficerId===currentUser.id,isSup=currentUser.role==="Supervisor";
+  // Build the action set additively so a person who is BOTH the covering officer
+  // for this request AND a supervisor sees both sets of controls, instead of one
+  // silently overwriting the other.
+  let parts=[];
+  if(isCover&&r.coveringStatus==="Pending")parts.push(`<button class="action-btn approve" onclick="setCoveringApproval('${r.id}','Approved')">Agree ✓</button><button class="action-btn reject" onclick="setCoveringApproval('${r.id}','Rejected')">Reject ✕</button>`);
+  if(isSup){
+   if(r.coveringStatus==="Approved"&&r.supervisorStatus==="Pending")parts.push(`<button class="action-btn approve" onclick="setSupervisorApproval('${r.id}','Approved')">Approve ✓</button><button class="action-btn reject" onclick="setSupervisorApproval('${r.id}','Rejected')">Reject ✕</button>`);
+   parts.push(`<button class="action-btn remove" onclick="deleteLeaveRequest('${r.id}')">Delete</button>`);
+  }
+  const actions=parts.length?parts.join(""):"—";
+  body.innerHTML+=`<tr><td><strong>${r.applicant}</strong></td><td><strong>${r.type}</strong><br><small>${r.startDate} to ${r.endDate}</small></td><td>${r.days}</td><td>${r.coveringOfficer||"-"}<br>${badge(r.coveringStatus||"Pending")}</td><td>${badge(r.supervisorStatus||"Pending")}</td><td>${actions}</td></tr>`;
+ });
+ if(currentUser.role==="Supervisor")renderSupervisor();
+}
+function renderSupervisor(){
+ const p=document.getElementById("pending-users-table-body");p.innerHTML="";const pending=users.filter(u=>u.status==="Pending");
+ if(!pending.length)p.innerHTML='<tr><td colspan="5" style="text-align:center">No pending accounts.</td></tr>';
+ pending.forEach(u=>p.innerHTML+=`<tr><td>${u.name}</td><td>${u.username}</td><td>${u.designation||"-"}</td><td>${u.role}</td><td><button class="action-btn approve" onclick="approvePendingUser('${u.id}')">Approve</button><button class="action-btn reject" onclick="rejectPendingUser('${u.id}')">Reject</button></td></tr>`);
+ const m=document.getElementById("members-table-body");m.innerHTML="";
+ users.filter(u=>u.status==="Approved").forEach(u=>{
+  const mt=used("Medical Leave",u.name),ct=used("Casual Leave",u.name);
+  const safeName=(u.name||"").replace(/'/g,"\\'"),targetUid=u.uid||u.id;
+  const memberActions=u.id===currentUser.id?"":`<button class="action-btn approve" onclick="openResetMemberModal('${targetUid}','${safeName}','${u.username}')">Reset PW</button> <button class="action-btn remove" onclick="removeUser('${u.id}')">Remove</button>`;
+  m.innerHTML+=`<tr><td>${u.name}</td><td>${u.username}</td><td>${u.designation||"-"}</td><td>${u.role}</td><td>${mt} / ${LIMITS["Medical Leave"]}</td><td>${ct} / ${LIMITS["Casual Leave"]}</td><td>${memberActions}</td></tr>`;
+ });
+ renderIndividualHistory();
+}
+window.renderIndividualHistory=()=>{
+ const name=document.getElementById("member-inspect-select").value,body=document.getElementById("individual-history-body");body.innerHTML="";
+ if(!name){body.innerHTML='<tr><td colspan="7" style="text-align:center">Select a member.</td></tr>';return}
+ const rows=leaveRequests.filter(r=>norm(r.applicant)===norm(name));if(!rows.length){body.innerHTML='<tr><td colspan="7" style="text-align:center">No records found.</td></tr>';return}
+ rows.forEach(r=>body.innerHTML+=`<tr><td>${r.type}</td><td>${r.startDate} to ${r.endDate}</td><td>${r.days}</td><td>${r.reason||"-"}</td><td>${r.coveringOfficer||"-"}<br>${badge(r.coveringStatus||"Pending")}</td><td>${badge(r.supervisorStatus||"Pending")}</td><td>${r.coveringStatus==="Approved"&&r.supervisorStatus==="Pending"?`<button class="action-btn approve" onclick="setSupervisorApproval('${r.id}','Approved')">Approve</button><button class="action-btn reject" onclick="setSupervisorApproval('${r.id}','Rejected')">Reject</button>`:""} <button class="action-btn remove" onclick="deleteLeaveRequest('${r.id}')">Delete</button></td></tr>`);
+};
+window.logout=async()=>{try{await signOut(auth)}catch{}sessionStorage.removeItem("ktg_current_user");currentUser=null;if(unsubUsers)unsubUsers();if(unsubLeaves)unsubLeaves();if(unsubNotifications)unsubNotifications();showAuth()};
+
+document.addEventListener("DOMContentLoaded",async()=>{
+ await initDefaults();
+ if(currentUser){const q=query(collection(db,"users"),where("username","==",currentUser.username)),s=await getDocs(q);if(!s.empty&&s.docs[0].data().status==="Approved"){currentUser={id:s.docs[0].id,...s.docs[0].data()};saveSession();showApp()}else{currentUser=null;sessionStorage.removeItem("ktg_current_user");showAuth()}}else showAuth();
+});
+</script>
+</body>
+</html>
